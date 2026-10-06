@@ -72,6 +72,13 @@ def _exit_on_signal(signum, frame):
     raise SystemExit(128 + signum)
 
 
+def install_stop_signals():
+    """SSH が切れたとき (SIGHUP) や kill されたときも finally を通して止める。"""
+    for name in ("SIGTERM", "SIGHUP"):
+        if hasattr(signal, name):
+            signal.signal(getattr(signal, name), _exit_on_signal)
+
+
 def main():
     parser = argparse.ArgumentParser(description="DRV8833 につないだ DC モーターの動作確認")
     parser.add_argument("--speed", type=float, default=0.4, help="出力 0〜1 (既定 0.4)")
@@ -84,10 +91,7 @@ def main():
     if args.seconds <= 0.0:
         parser.error("--seconds は 0 より大きい値を指定してください")
 
-    # SSH が切れたとき (SIGHUP) や kill されたときも finally を通して止める。
-    for name in ("SIGTERM", "SIGHUP"):
-        if hasattr(signal, name):
-            signal.signal(getattr(signal, name), _exit_on_signal)
+    install_stop_signals()
 
     def wait(seconds):
         if not args.dry_run:
