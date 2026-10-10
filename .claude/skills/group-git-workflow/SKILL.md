@@ -10,7 +10,7 @@ description: 班ブランチ(group-a〜group-d)での pull → 作業 → commit
 - `main` は先生専用。受講生は push できない(ruleset)。
 - 班は `group-a` / `group-b` / `group-c` / `group-d` のどれか 1 つ。最初に `git branch` で確認し、違うブランチにいたら `git checkout group-x` に戻す。
 - `materials/` は編集しない。成果物は `work/`。
-- 先生が `main` を更新すると GitHub Actions が各班ブランチに merge する。受講生は `git pull` するだけでよい。
+- `main` が更新されると自動で各班ブランチに merge される。受講生は `git pull` するだけでよい。
 
 ## 基本の流れ
 

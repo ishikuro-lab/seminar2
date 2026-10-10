@@ -2,7 +2,7 @@ name: distribute
 
 # main が更新されたら、各班のブランチ(group-a〜group-d)に main をマージして配る。
 # 班が materials/ を編集していなければ衝突しない。衝突したら失敗するので、
-# 先生が scripts/distribute.sh を手元で実行して解決する。
+# 管理者が手元でマージして解決する。
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
             if git merge --no-edit origin/main -m "chore: main の教材を ${{ matrix.group }} に配布"; then
               git push origin "${{ matrix.group }}"
             else
-              echo "::error::${{ matrix.group }} で衝突しました。scripts/distribute.sh で手動解決してください。"
+              echo "::error::${{ matrix.group }} で衝突しました。管理者が手動でマージしてください。"
               git diff --name-only --diff-filter=U
               exit 1
             fi

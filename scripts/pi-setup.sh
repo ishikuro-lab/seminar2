@@ -9,7 +9,7 @@
 #   - ~/seminar2 に班のブランチを clone
 #   - git の基本設定(pull は merge、push は現在のブランチのみ)
 #
-# sudo が要るもの(先生が実行): sudo apt install gh / ホスト名の変更
+# sudo が要るもの(管理者が実行): sudo apt install gh / ホスト名の変更
 set -euo pipefail
 
 group="${1:-}"
@@ -43,7 +43,7 @@ git config --global core.editor nano
 
 if ! command -v gh >/dev/null 2>&1; then
   echo
-  echo "gh(GitHub CLI)が入っていません。先生に次を実行してもらってください:"
+  echo "gh(GitHub CLI)が入っていません。管理者に次を実行してもらってください:"
   echo "  sudo apt update && sudo apt install -y gh"
 fi
 

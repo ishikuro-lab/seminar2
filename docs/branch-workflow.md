@@ -63,8 +63,4 @@ git push
 - 他の班のブランチへの push。
 - `materials/` の編集(教材の更新と衝突します)。
 
-## 先生向けメモ
-
-- `main` へ push すると `.github/workflows/distribute.yml` が走り、`group-*` へ merge します。班が `materials/` を触っていなければ衝突しません。
-- 衝突したら Actions が失敗するので、`scripts/distribute.sh` を手元で実行して解決します。
-- 解答や未公開資料は `ishikuro-lab/seminar2-dev`(private)の `dev` ブランチで作り、公開するものだけを `main` に移します。PC では remote `dev` に push 先を固定してあります(`branch.dev.pushRemote`)。
+Git のコマンドそのものがはじめての人は [git-basics.md](git-basics.md) を先に読んでください。
