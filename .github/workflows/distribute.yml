@@ -1,0 +1,48 @@
+name: distribute
+
+# main が更新されたら、各班のブランチ(group-a〜group-d)に main をマージして配る。
+# 班が materials/ を編集していなければ衝突しない。衝突したら失敗するので、
+# 先生が scripts/distribute.sh を手元で実行して解決する。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: distribute
+  cancel-in-progress: false
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        group: [group-a, group-b, group-c, group-d]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Merge main into ${{ matrix.group }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "${{ matrix.group }}" >/dev/null; then
+            git checkout -B "${{ matrix.group }}" "origin/${{ matrix.group }}"
+            if git merge --no-edit origin/main -m "chore: main の教材を ${{ matrix.group }} に配布"; then
+              git push origin "${{ matrix.group }}"
+            else
+              echo "::error::${{ matrix.group }} で衝突しました。scripts/distribute.sh で手動解決してください。"
+              git diff --name-only --diff-filter=U
+              exit 1
+            fi
+          else
+            echo "${{ matrix.group }} が無いので main から作成します"
+            git push origin "main:refs/heads/${{ matrix.group }}"
+          fi

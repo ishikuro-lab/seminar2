@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# エディタ・OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*~
+
+# 大きなデータや一時ファイルはコミットしない
+*.log
+*.csv
+*.mp4
+*.zip
+tmp/
+
+# AI ツールのローカル設定(共有しない)
+.claude/settings.local.json
+.codex/
+.gemini/
