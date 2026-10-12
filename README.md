@@ -58,6 +58,8 @@ AI(Claude、ChatGPT、Gemini、GitHub Copilot など)を使ってもかまいま
 
 ## 困ったとき
 
+まず [docs/troubleshooting.md](docs/troubleshooting.md) を見てください。症状から引けるようになっています。
+
+- PC からつながらない: 30 秒待ってもう一度。だめならラズパイの画面で `ping -c 3 192.168.60.1`。
 - `git push` が拒否された: `main` に push しようとしていないか `git branch` で確認する。
-- `CONFLICT` と出た: [docs/branch-workflow.md](docs/branch-workflow.md) の「衝突したとき」を見る。直せなければ先生を呼ぶ。
-- ラズパイにつながらない、GPIO busy と出る: [docs/raspi-setup.md](docs/raspi-setup.md) の「トラブル対処」。
+- `CONFLICT` と出た: [docs/branch-workflow.md](docs/branch-workflow.md) の「衝突したとき」。直せなければ先生を呼ぶ。

@@ -22,6 +22,18 @@ description: 授業用ラズパイ(Zero 2 W、ユーザー seminar2)の SSH・Wi
 
 Wi-Fi の省電力オフは設定済みだが、それでも切れることがある。原因は未確定なので「省電力が原因」とは言わない。
 
+### ルーターがラズパイを忘れる症状(いちばん多い)
+
+ラズパイは `接続済み`(`connected`)のまま、PC からの ping / ssh だけが通らなくなる。ルーター側でラズパイの登録が消えており、ラズパイが何か送信するまで気づけない。見張り `wifi-keepalive`(5 秒ごとにルーターへ ping、3 回失敗で `nmcli` 再接続)が入っているので、通常 20〜30 秒で自動復旧する。
+
+1. まず 30 秒待って PC から再試行。
+2. ラズパイの画面で `ping -c 3 192.168.60.1`(送信して気づかせる)。
+3. だめなら `nmcli device disconnect wlan0 && nmcli device connect wlan0`(最大 2 回)。
+4. `systemctl is-active wifi-keepalive` が `active` でなければ、先生に再起動を依頼(sudo)。
+5. 電源の入れ直しは最後の手段(ログが消える)。
+
+受講生向けの一覧は `docs/troubleshooting.md`。
+
 ## GPIO busy / lgpio のエラー
 
 ```

@@ -74,14 +74,12 @@ python3 straight.py                  # 床に置いて、前を空けてから
 
 ## トラブル対処
 
+くわしくは [troubleshooting.md](troubleshooting.md)(症状から引ける一覧)。よくあるものだけ:
+
 | 症状 | 対処 |
 |---|---|
-| `ssh` がつながらない、`Name or service not known` | ラズパイの電源と Wi-Fi を確認。IP で接続。それでもだめならラズパイで `nmcli device disconnect wlan0 && nmcli device connect wlan0`(sudo 不要) |
+| `ssh` がつながらない | 30 秒待ってもう一度。だめならラズパイの画面で `ping -c 3 192.168.60.1` → `nmcli device disconnect wlan0 && nmcli device connect wlan0` |
+| `Name or service not known` | ラズパイで `hostname -I` を見て `ssh seminar2@192.168.x.x` |
 | `GPIO busy` と出る | 前のプログラムが残っています。`ps aux \| grep python` で見つけて `kill <番号>` |
 | `git push` が `GH013` で拒否 | `main` に push しようとしています。`git branch` で確認し、`git checkout group-a` に戻る |
-| `git push` で認証エラー | `gh auth status` で確認。切れていれば `gh auth login` をやり直す |
-| `CONFLICT` | [branch-workflow.md](branch-workflow.md) の「衝突したとき」 |
-| モーターが回らない・うなるだけ | `--speed 0.6` のように出力を上げる。モーター電源スイッチと電池を確認 |
 | `sudo` が必要と言われた | 受講生は使えません。先生を呼んでください |
-
-さらに詳しい切り分けは `.claude/skills/raspi-troubleshoot/SKILL.md` にあります(AI に読ませても、自分で読んでもかまいません)。
