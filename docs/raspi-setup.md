@@ -78,7 +78,7 @@ python3 straight.py                  # 床に置いて、前を空けてから
 
 | 症状 | 対処 |
 |---|---|
-| `ssh` がつながらない | 30 秒待ってもう一度。だめならラズパイの画面で `ping -c 3 192.168.60.1` → `nmcli device disconnect wlan0 && nmcli device connect wlan0` |
+| `ssh` がつながらない | 30 秒待ってもう一度。だめならラズパイの画面で `ping -c 3 192.168.2.1` → `nmcli device disconnect wlan0 && nmcli device connect wlan0` |
 | `Name or service not known` | ラズパイで `hostname -I` を見て `ssh seminar2@192.168.x.x` |
 | `GPIO busy` と出る | 前のプログラムが残っています。`ps aux \| grep python` で見つけて `kill <番号>` |
 | `git push` が `GH013` で拒否 | `main` に push しようとしています。`git branch` で確認し、`git checkout group-a` に戻る |

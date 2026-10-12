@@ -27,7 +27,7 @@ Wi-Fi の省電力オフは設定済みだが、それでも切れることが�
 ラズパイは `接続済み`(`connected`)のまま、PC からの ping / ssh だけが通らなくなる。ルーター側でラズパイの登録が消えており、ラズパイが何か送信するまで気づけない。見張り `wifi-keepalive`(5 秒ごとにルーターへ ping、3 回失敗で `nmcli` 再接続)が入っているので、通常 20〜30 秒で自動復旧する。
 
 1. まず 30 秒待って PC から再試行。
-2. ラズパイの画面で `ping -c 3 192.168.60.1`(送信して気づかせる)。
+2. ラズパイの画面で `ping -c 3 192.168.2.1`(授業用ルーター。別のルーターなら `ip route | head -1` の `default via` の IP。送信して気づかせる)。
 3. だめなら `nmcli device disconnect wlan0 && nmcli device connect wlan0`(最大 2 回)。
 4. `systemctl is-active wifi-keepalive` が `active` でなければ、先生に再起動を依頼(sudo)。
 5. 電源の入れ直しは最後の手段(ログが消える)。
