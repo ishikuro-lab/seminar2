@@ -7,10 +7,10 @@
 | 1 | LED を点ける・消す | `01_led_on.py` |
 | 2 | LED を点滅させる(ループ) | `02_led_blink.py` |
 | 3 | LED の明るさを変える(PWM) | `03_led_pwm.py`、`04_led_fade.py` |
-| 4 | 演習① | `excersises/led_01_*.py`〜`led_05_*.py` |
+| 4 | 演習① | `excersises/01_led_*.py`〜`05_led_*.py` |
 | 5 | 超音波センサで距離を測る | `05_distance_read.py` |
 | 6 | 距離に応じて LED を点ける | `06_distance_led.py` |
-| 7 | 演習② | `excersises/ultrasonic_01_*.py`〜`ultrasonic_05_*.py` |
+| 7 | 演習② | `excersises/06_ultrasonic_*.py`〜`10_ultrasonic_*.py` |
 
 ## 準備
 
@@ -189,4 +189,6 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 
 ## 穴埋め練習
 
-`excersises/` に LED 5問と超音波センサ5問があります。練習は `cd ~/seminar2/lesson02/excersises` の後、例えば `python3 led_01_five_seconds.py` で実行します。問題文と指示は各 Python ファイルのコメントにあります。`___` を埋めてから実行してください。`lesson_tools.py` は共通処理の読み込み用なので編集しません。
+`excersises/` に LED 5問と超音波センサ5問があります。練習は `cd ~/seminar2/lesson02/excersises` の後、例えば `python3 01_led_five_seconds.py` で実行します。問題文と指示は各 Python ファイルのコメントにあります。`___` を埋めてから実行してください。`lesson_tools.py` は共通処理の読み込み用なので編集しません。
+
+練習問題は01〜10の順に進めます。LEDの01〜05、超音波センサの06〜10で、順番に実行・`for`・`while`・`if`を段階的に学びます。ループは関数ではなく、処理を繰り返す構文です。
