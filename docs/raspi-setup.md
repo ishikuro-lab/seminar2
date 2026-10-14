@@ -57,7 +57,7 @@ git clone -b group-a https://github.com/ishikuro-lab/seminar2.git ~/seminar2
 
 ## 4. 第2回の教材を動かす
 
-穴埋め練習は `lesson02/excersises/` にあります。各コードのコメントを読み、`___` を埋めて保存してから実行します。
+練習問題は `lesson02/excersises/` にあります。各コードのコメントを読み、コメントの下に自分でコードを書き、保存してから実行します。
 
 ```bash
 cd ~/seminar2
