@@ -22,8 +22,8 @@
 
 - `main` は先生専用。受講生は push できない(ruleset で保護)。PR も先生がマージする。
 - 班の作業は `group-a` 〜 `group-d`。ユーザーがどの班か確認してから作業する(`git branch`)。
-- `materials/` は先生が配る教材。**編集しない**。コピーして `work/` で使う。
-- 班の成果物は `work/` に置く。他の班のフォルダやブランチは触らない。
+- `lesson02/` 直下は先生が配る教材。**編集しない**。コピーして `lesson02/work/` で使う。
+- 班の成果物は `lesson02/work/` に置く。他の班のフォルダやブランチは触らない。
 - `.claude/skills/group-git-workflow/SKILL.md` の手順で pull → 作業 → commit → push。
 
 ## 環境

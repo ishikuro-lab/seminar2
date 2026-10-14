@@ -68,7 +68,7 @@ python3 straight.py                  # 床に置いて、前を空けてから
 
 ## 5. ファイルの編集
 
-- ラズパイ上で直接: `nano work/robot.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
+- ラズパイ上で直接: `nano lesson02/work/robot.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
 - PC で編集して運ぶ: PC で clone → 編集 → `git push` → ラズパイで `git pull`。使い慣れたエディタで書きたいときはこちら。
 - VS Code の Remote-SSH でラズパイのファイルを直接開くこともできます(重いときは PC 編集に切り替え)。
 

@@ -30,7 +30,7 @@ description: Raspberry Pi Zero 2 W + DRV8833 でモーターや GPIO を安全�
 - `motor/motor_test.py`: `Gpio` クラス(claim、PWM、close)、`drive(gpio, name, speed)`、信号処理。新しいコードはここから `import` する。
 - `motor/straight.py`: 両輪を同時に回し、時間で止める。`FORWARD` で前進方向を定義。
 
-## テンプレ(work/ に置く新しい走行プログラム)
+## テンプレ(lesson02/work/ に置く新しい走行プログラム)
 
 ```python
 #!/usr/bin/env python3
@@ -40,7 +40,7 @@ import sys
 import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "motor"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "motor"))
 from motor_test import MOTORS, Gpio, drive, install_stop_signals  # noqa: E402
 
 MAX_SECONDS = 10.0

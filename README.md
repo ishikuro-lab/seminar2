@@ -24,8 +24,8 @@ Raspberry Pi Zero 2 W とモーター基板(DRV8833)でロボットを動かす�
 ```
 cd ~/seminar2
 git pull                      # 先生の新しい教材と、班の仲間の変更を取り込む
-# work/ の下で作業する
-git add work/
+# lesson02/work/ の下で作業する
+git add lesson02/work/
 git commit -m "何をしたか短く書く"
 git push                      # 自分の班のブランチに送る
 ```
@@ -36,9 +36,9 @@ git push                      # 自分の班のブランチに送る
 
 | フォルダ | 内容 | 編集 |
 |---|---|---|
-| `materials/` | 各回の教材(先生が追加) | しない(読むだけ) |
+| `lesson02/` | 第2回の教材と演習 | 教材は読むだけ |
 | `motor/` | モーターを回すサンプル([motor/README.md](motor/README.md)) | コピーして使う |
-| `work/` | 班の作業場所。ここに自分たちのコードを置く | する |
+| `lesson02/work/` | 班の作業場所。ここに自分たちのコードを置く | する |
 | `docs/` | Git の基本、ラズパイの使い方、トラブル対処 | 読む |
 | `scripts/` | ラズパイの初期設定用 | 触らない |
 
@@ -63,3 +63,13 @@ AI(Claude、ChatGPT、Gemini、GitHub Copilot など)を使ってもかまいま
 - PC からつながらない: 30 秒待ってもう一度。だめならラズパイの画面で `ping -c 3 192.168.2.1`。
 - `git push` が拒否された: `main` に push しようとしていないか `git branch` で確認する。
 - `CONFLICT` と出た: [docs/branch-workflow.md](docs/branch-workflow.md) の「衝突したとき」。直せなければ先生を呼ぶ。
+
+## PDF版の案内
+
+`docs/` の各説明には、同名のPDF版があります。
+
+- [ラズパイの接続・準備（PDF）](docs/raspi-setup.pdf)
+- [Gitの基本（PDF）](docs/git-basics.pdf)
+- [班のブランチと作業手順（PDF）](docs/branch-workflow.pdf)
+- [AIを使う場合（PDF）](docs/ai-guide.pdf)
+- [困ったとき（PDF）](docs/troubleshooting.pdf)

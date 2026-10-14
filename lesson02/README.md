@@ -17,8 +17,9 @@
 ```
 cd ~/seminar2
 git pull
-cp -r materials/lesson02 work/lesson02    # 自分の班の作業場所にコピーしてから編集する
-cd work/lesson02
+mkdir -p lesson02/work
+cp -n lesson02/*.py lesson02/work/    # 共通処理も一緒にコピーする
+cd lesson02/work
 ```
 
 ## GPIO とは
@@ -102,44 +103,58 @@ GPIO12 (物理32) ──[抵抗 330Ω]──>|── GND (物理34)
 
 ## プログラムの基本形
 
-この回のプログラムは全部、次の形をしています。
+プログラムは上から順に実行します。GPIO の準備と後片付けは、同じフォルダの `lesson_gpio.py` にまとめています。この共通ファイルは編集せず、教材・演習のファイルと一緒に置いてください。中では `lgpio` を使います。
 
 ```python
-import lgpio                      # GPIO を操作するライブラリ(ラズパイに最初から入っている)
+from lesson_gpio import led_on, led_off, sleep
 
-h = lgpio.gpiochip_open(0)        # GPIO を使う準備(0 番のチップ = 40 ピン)
-lgpio.gpio_claim_output(h, 12, 0) # GPIO12 を出力にして、最初は Low(0)
-try:
-    lgpio.gpio_write(h, 12, 1)    # High にする(LED 点灯)
-    ...
-finally:
-    lgpio.gpio_write(h, 12, 0)    # 終わるときは必ず Low に戻す
-    lgpio.gpiochip_close(h)       # 後片付け
+led_on(12)   # GPIO12 の LED を点ける
+sleep(3)     # 3秒待つ
+led_off(12)  # 消す
 ```
 
-- `try` と `finally`: 途中でエラーが出ても、`Ctrl + C` で止めても、`finally` の中は必ず実行されます。LED やモーターを「点けっぱなし」にしないための書き方です。
-- ライブラリ: よく使う機能をまとめたもの。`import` で読み込んで使います。
+最初の `import` は道具の読み込みです。その下に、やりたい操作を順番に書きます。
+
+| 操作 | 書き方 |
+|---|---|
+| LED を点ける | `led_on(12)` |
+| LED を消す | `led_off(12)` |
+| 0.5秒待つ | `sleep(0.5)` |
+| PWM のデューティ比を50 %にする | `brightness(12, 50)` |
+| GPIO4 のセンサを読む | `value = read_sensor(4)` |
+| 読んだ値を表示する | `print(value)` |
+
+準備は最初の操作時に自動で行います。LED を点けたら最後に `led_off()` で消します。プログラム終了時のGPIO解放は共通ファイルが行います。繰り返すプログラムを `Ctrl+C` で止めた場合も、共通の操作処理で後片付けします。終了時に `KeyboardInterrupt` と表示されても、中断によるものです。
 
 ## 実行のしかた
 
 ```
-python3 led_on.py             # 既定(GPIO12)で実行
-python3 led_on.py --pin 21    # 別のピンで試す(配線も変える)
-python3 led_on.py --help      # 使える引数を見る
+python3 led_on.py
+python3 led_blink.py
+python3 led_pwm.py
 ```
 
-`Ctrl + C` で止められます。
+Thonny では、ラズパイ側の `lesson_gpio.py` と同じフォルダに教材・演習を保存して実行します。ターミナルでは `Ctrl+C` で止められます。
+
+ピンを変えるときは `led_on(12)` などの番号と配線を変えます。点滅間隔は `sleep(0.5)` の数字、明るさは `brightness(12, 50)` の2つ目の数字を変えて試してください。
+
+まず GPIO に触れずに確認するときは、`import` の下に次の2行を追加します。PC でも動き、模擬出力を画面に表示します。センサ入力は模擬値0です。本番では追加した2行を外します。
+
+```python
+from lesson_gpio import dry_run
+dry_run()
+```
 
 ## 各スクリプト
 
 | ファイル | やること | 学ぶこと |
 |---|---|---|
-| `led_on.py` | 3 秒点灯して消す | 出力の基本、try/finally |
-| `led_blink.py` | 0.5 秒おきに点滅 | `while True` と `time.sleep`、Ctrl+C |
+| `led_on.py` | 3 秒点灯して消す | 点灯・待つ・消灯 |
+| `led_blink.py` | 0.5 秒おきに点滅 | `while True` と `sleep`、Ctrl+C |
 | `led_pwm.py` | 明るさを 0〜100 % で固定 | PWM(高速に点滅させて明るさを変える) |
 | `led_fade.py` | ゆっくり明るく → 暗く | `for` ループで PWM の値を変える |
-| `sensor_read.py` | センサ 1 ch を読み続ける | 入力の基本、`gpio_read` |
-| `sensor_8ch.py` | 8 ch を一行で表示 | リストとループ、`--pins` で番号を変える |
+| `sensor_read.py` | センサ 1 ch を読み続ける | 入力の基本、`read_sensor` |
+| `sensor_8ch.py` | 8 ch を一行で表示 | リストと `for` ループ、先頭の `sensor_pins` で番号を変える |
 
 ## PWM とは
 
@@ -150,7 +165,7 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 デューティ比 75 %:  ‾‾‾|_|‾‾‾|_|‾‾‾|_  → 明るい
 ```
 
-`lgpio.tx_pwm(h, pin, 1000, 50)` で「1000 Hz、デューティ比 50 %」になります。第 3 回のモーターの速度制御でも同じ仕組みを使います。
+`brightness(12, 50)` で「1000 Hz、デューティ比 50 %」になります。第 3 回のモーターの速度制御でも同じ仕組みを使います。
 
 ## うまくいかないとき
 
@@ -161,3 +176,5 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 | `ModuleNotFoundError: lgpio` | ラズパイ以外で実行している。ラズパイで実行する |
 | センサがずっと 1(または 0) | 3.3 V と GND を確認。VR を回して感度を調整。床との距離は 5 mm 前後 |
 | センサ基板の LED が全部点きっぱなし | 感度が高すぎる。VR を逆に回す |
+
+コピーの `-n` は、すでにある作業ファイルを上書きしない指定です。

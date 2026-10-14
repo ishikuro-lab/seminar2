@@ -1,6 +1,6 @@
 # 第 2 回 演習
 
-ファイルは `work/lesson02/` に作り、できたら `git add work/` → `git commit` → `git push` で班のブランチに送ってください。ファイル名は指定の通りにします。
+ファイルは `lesson02/work/` に作り、できたら `git add lesson02/work/` → `git commit` → `git push` で班のブランチに送ってください。ファイル名は指定の通りにします。共通ファイル `lesson_gpio.py` と同じフォルダに保存してください。
 
 ## 演習①: LED
 
@@ -19,15 +19,15 @@
 
 ### 1-3. 2 個の LED を交互に(`ex1_two_leds.py`)
 
-LED を 2 個(例: GPIO12 と GPIO21)つなぎ、交互に点灯させます。間隔は `--interval` で変えられるようにします。
+LED を 2 個(例: GPIO12 と GPIO21)つなぎ、交互に点灯させます。間隔は `sleep()` に渡す数字で変えます。
 
-- ヒント: `gpio_claim_output` を 2 回。`finally` で 2 本とも Low にする。
+- ヒント: `led_on(12)` と `led_on(21)`、それぞれの `led_off()` を使う。最後に使った LED を `led_off()` で消す。
 
 ### 1-4. 呼吸するように(`ex1_breath.py`、発展)
 
 `led_fade.py` を改造して、明るくなるときはゆっくり(2 秒)、暗くなるときは速く(0.5 秒)にします。
 
-- ヒント: `step` と `wait` を上りと下りで別々に持つ。
+- ヒント: 明るくする `for` と暗くする `for` で、`sleep()` の待ち時間を変える。
 
 ## 演習②: センサ
 
@@ -35,31 +35,31 @@ LED を 2 個(例: GPIO12 と GPIO21)つなぎ、交互に点灯させます。�
 
 センサ OUT1(GPIO4)が黒(1)のとき LED(GPIO12)を点け、白(0)のとき消します。
 
-- ヒント: `sensor_read.py` のループの中で `gpio_write` を呼ぶ。`gpio_claim_input` と `gpio_claim_output` の両方が要る。
+- ヒント: `read_sensor(4)` が1なら `led_on(12)`、0なら `led_off(12)`。`if` と `else` を使う。
 
 ### 2-2. 線の位置を表示(`ex2_position.py`)
 
 8 ch を読み、黒を検出したチャンネルの番号から「左」「中央」「右」「見失った」を表示します。
 
 - 1〜3 ch が黒 → 左、4〜5 ch → 中央、6〜8 ch → 右、全部白 → 見失った。
-- ヒント: `sensor_8ch.py` の `read_all()` を使う。`values.index(1)` で最初に 1 が出る位置が分かる(1 が無いと例外になるので `1 in values` で先に確かめる)。
+- ヒント: `sensor_8ch.py` の `for` ループで、センサの値を `values` に入れる。`values.index(1)` で最初に 1 が出る位置が分かる(1 が無いと例外になるので `1 in values` で先に確かめる)。
 
 ### 2-3. 通過回数を数える(`ex2_count.py`)
 
-センサの前で黒い紙を出し入れし、白 → 黒に変わった回数を数えて表示します。`Ctrl + C` で止めたとき合計を表示します。
+センサの前で黒い紙を出し入れし、白 → 黒に変わった回数を数えて表示します。黒い紙を3回検出したら繰り返しを終え、合計を表示します。
 
-- ヒント: 前回の値を変数に覚えておき、「前回 0、今回 1」のときだけ数える。
+- ヒント: 前回の値を変数に覚えておき、「前回 0、今回 1」のときだけ数える。`while count < 3:` で3回まで繰り返す。
 
 ### 2-4. 自分で決めたピンで 3 ch(`ex2_my_pins.py`、発展)
 
-OUT1〜3 を自分で選んだ GPIO につなぎ替え、`--pins` 引数ではなくプログラムの先頭の変数で指定して、2-2 と同じことを 3 ch でやります。
+OUT1〜3 を自分で選んだ GPIO につなぎ替え、プログラム先頭の `sensor_pins` に3本の番号を書いて、2-2 と同じことを 3 ch でやります。
 
 ## 提出の確認
 
 ```
 cd ~/seminar2
-git status            # work/lesson02/ex1_sos.py などが出る
-git add work/
+git status            # lesson02/work/ex1_sos.py などが出る
+git add lesson02/work/
 git commit -m "第2回 演習①②"
 git push
 ```

@@ -25,7 +25,7 @@ Claude Code 向けの [CLAUDE.md](CLAUDE.md) と同じ内容です。どのツ�
 ## ブランチとフォルダ
 
 - `main` は先生専用(受講生は push 不可)。班の作業は `group-a` 〜 `group-d`。
-- `materials/` は編集しない。班の成果物は `work/` に置く。
+- `lesson02/` 直下の教材は編集しない。班の成果物は `lesson02/work/` に置く。
 - 他の班のフォルダやブランチは触らない。
 
 ## 環境
