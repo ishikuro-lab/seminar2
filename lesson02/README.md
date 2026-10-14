@@ -189,6 +189,6 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 
 ## 練習問題
 
-`excersises/` に LED 5問と超音波センサ5問があります。練習は `cd ~/seminar2/lesson02/excersises` の後、例えば `python3 01_led_five_seconds.py` で実行します。問題文と指示は各 Python ファイルのコメントにあります。コメントの下に自分でコードを書いてから実行してください。`lesson_tools.py` は共通処理の読み込み用なので編集しません。
+`excersises/` に LED 5問と超音波センサ5問があります。練習は `cd ~/seminar2/lesson02/excersises` の後、例えば `python3 01_led_five_seconds.py` で実行します。問題文と指示は各 Python ファイルのコメントにあります。コメントの下に自分でコードを書いてから実行してください。
 
 練習問題は01〜10の順に進めます。LEDの01〜05、超音波センサの06〜10で、順番に実行・`for`・`while`・`if`を段階的に学びます。ループは関数ではなく、処理を繰り返す構文です。
