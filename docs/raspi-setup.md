@@ -57,21 +57,20 @@ git clone -b group-a https://github.com/ishikuro-lab/seminar2.git ~/seminar2
 
 ## 4. 第2回の教材を動かす
 
-リポジトリのルートから、教材と共通処理を作業場所へコピーします。
+穴埋め練習は `lesson02/excersises/` にあります。各コードのコメントを読み、`___` を埋めて保存してから実行します。
 
 ```bash
 cd ~/seminar2
-mkdir -p lesson02/work
-cp -n lesson02/*.py lesson02/work/
-cd lesson02/work
-python3 01_led_on.py
+mkdir -p lesson02/excersises
+cd lesson02/excersises
+python3 led_01_five_seconds.py
 ```
 
 LED は GPIO12 → 抵抗330 Ω → LED → GND に接続します。先に [第2回の配線と説明](../lesson02/README.md) を確認してください。
 
 ## 5. ファイルの編集
 
-- ラズパイ上で直接: `nano ~/seminar2/lesson02/work/01_led_on.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
+- ラズパイ上で直接: `nano ~/seminar2/lesson02/excersises/led_01_five_seconds.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
 - PC で編集して運ぶ: PC で clone → 編集 → `git push` → ラズパイで `git pull`。使い慣れたエディタで書きたいときはこちら。
 - VS Code の Remote-SSH でラズパイのファイルを直接開くこともできます(重いときは PC 編集に切り替え)。
 

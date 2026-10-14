@@ -7,19 +7,18 @@
 | 1 | LED を点ける・消す | `01_led_on.py` |
 | 2 | LED を点滅させる(ループ) | `02_led_blink.py` |
 | 3 | LED の明るさを変える(PWM) | `03_led_pwm.py`、`04_led_fade.py` |
-| 4 | 演習① | [exercises.md](exercises.md) |
+| 4 | 演習① | `excersises/led_01_*.py`〜`led_05_*.py` |
 | 5 | 超音波センサで距離を測る | `05_distance_read.py` |
 | 6 | 距離に応じて LED を点ける | `06_distance_led.py` |
-| 7 | 演習② | [exercises.md](exercises.md) |
+| 7 | 演習② | `excersises/ultrasonic_01_*.py`〜`ultrasonic_05_*.py` |
 
 ## 準備
 
 ```
 cd ~/seminar2
 git pull
-mkdir -p lesson02/work
-cp -n lesson02/*.py lesson02/work/    # 共通処理も一緒にコピーする
-cd lesson02/work
+mkdir -p lesson02/excersises
+cd lesson02/excersises
 ```
 
 ## GPIO とは
@@ -136,6 +135,7 @@ led_off(12)  # 消す
 ## 実行のしかた
 
 ```
+cd ~/seminar2/lesson02
 python3 01_led_on.py
 python3 02_led_blink.py
 python3 03_led_pwm.py
@@ -184,6 +184,9 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 | 「測れません」と出る | VCCが5 Vか、GNDが共通か、TRIG/ECHOが逆でないか、ECHOの分圧を先生と確認 |
 | 距離が不安定 | センサの正面に平らな物を置く。他のプログラムを止め、1人ずつ測る |
 
-コピーの `-n` は、すでにある作業ファイルを上書きしない指定です。
 
 教材コードは `01_`〜`06_` の番号順に使います。`lesson_gpio.py` は読み込む共通ファイルなので、名前を変えずに一緒にコピーしてください。
+
+## 穴埋め練習
+
+`excersises/` に LED 5問と超音波センサ5問があります。練習は `cd ~/seminar2/lesson02/excersises` の後、例えば `python3 led_01_five_seconds.py` で実行します。問題文と指示は各 Python ファイルのコメントにあります。`___` を埋めてから実行してください。`lesson_tools.py` は共通処理の読み込み用なので編集しません。

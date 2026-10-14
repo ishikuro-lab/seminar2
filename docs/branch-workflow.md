@@ -18,7 +18,7 @@ flowchart LR
 | ブランチ | 誰が書くか | 内容 |
 |---|---|---|
 | `main` | 先生だけ | 教材(`lesson02/`、`docs/`) |
-| `group-a` 〜 `group-d` | その班の受講生 | `main` の内容 + 班の作業(`lesson02/work/`) |
+| `group-a` 〜 `group-d` | その班の受講生 | `main` の内容 + 班の作業(`lesson02/excersises/`) |
 
 受講生は `main` に push できません(GitHub の ruleset で止まります)。間違えて `main` に切り替えて作業しても、push のときにエラーになるだけでデータは消えません。
 
@@ -28,9 +28,9 @@ flowchart LR
 cd ~/seminar2
 git branch                    # * group-a のように自分の班か確認
 git pull                      # 教材と仲間の変更を取り込む
-# lesson02/work/ の下で編集・実行
+# lesson02/excersises/ の下で編集・実行
 git status                    # 何を変えたか確認
-git add lesson02/work/                 # lesson02/work/ の変更だけを追加
+git add lesson02/excersises/                 # lesson02/excersises/ の変更だけを追加
 git commit -m "直進のテストを追加"
 git push
 ```
@@ -61,6 +61,6 @@ git push
 
 - `git push --force`(履歴を書き換える)。ruleset で拒否されますが、やらないでください。
 - 他の班のブランチへの push。
-- `lesson02/` 直下の教材の編集(教材の更新と衝突します)。作業は `lesson02/work/` に置きます。
+- `lesson02/` 直下の教材の編集(教材の更新と衝突します)。作業は `lesson02/excersises/` に置きます。
 
 Git のコマンドそのものがはじめての人は [git-basics.md](git-basics.md) を先に読んでください。

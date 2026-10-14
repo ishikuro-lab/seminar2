@@ -24,8 +24,8 @@ Raspberry Pi Zero 2 W とモーター基板(DRV8833)でロボットを動かす�
 ```
 cd ~/seminar2
 git pull                      # 先生の新しい教材と、班の仲間の変更を取り込む
-# lesson02/work/ の下で作業する
-git add lesson02/work/
+# lesson02/excersises/ の下で作業する
+git add lesson02/excersises/
 git commit -m "何をしたか短く書く"
 git push                      # 自分の班のブランチに送る
 ```
@@ -37,7 +37,7 @@ git push                      # 自分の班のブランチに送る
 | フォルダ | 内容 | 編集 |
 |---|---|---|
 | `lesson02/` | 第2回の教材と演習 | 教材は読むだけ |
-| `lesson02/work/` | 班の作業場所。ここに自分たちのコードを置く | する |
+| `lesson02/excersises/` | 班の作業場所。ここに自分たちのコードを置く | する |
 | `docs/` | Git の基本、ラズパイの使い方、トラブル対処 | 読む |
 | `scripts/` | ラズパイの初期設定用 | 触らない |
 
