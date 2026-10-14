@@ -15,64 +15,21 @@ description: Raspberry Pi Zero 2 W + DRV8833 でモーターや GPIO を安全�
 - 番号は BCM(GPIO 番号)。物理ピン番号と混同しない。
 - DRV8833 の有効化(nSLEEP)は基板上で 3.3V 固定。GPIO で操作しない。
 - 片方のピンに PWM(1000 Hz)、もう片方を Low で回る。IN1 に PWM = 正転。
-- 両方 High はブレーキ。切り替えのときは Low にする側を先に下げる(`motor/motor_test.py` の `drive()`)。
+- 両方 High はブレーキ。切り替えのときは Low にする側を先に下げる。
 
 ## 安全手順(コードに必ず組み込む)
 
 1. `--dry-run` オプションを付け、GPIO に触らずに出す値を表示できるようにする。
 2. 走行時間に上限(例 10 秒)。`time.sleep` で待ち、ループで回し続けない。
 3. `try/finally` で終了時に全ピン Low、`gpio_free`、`gpiochip_close`。
-4. `SIGHUP` / `SIGTERM` を受けたら `SystemExit` にして `finally` を通す(SSH 切断対策)。`motor_test.py` の `install_stop_signals()` を再利用する。
+4. `SIGHUP` / `SIGTERM` を受けたら `SystemExit` にして `finally` を通す(SSH 切断対策)。信号処理は共通ファイル側へまとめる。
 5. 実行手順を README に書く: dry-run → 車輪を浮かせて → 床に置いて前を空ける。
 
-## 手本
+## 公開中の教材
 
-- `motor/motor_test.py`: `Gpio` クラス(claim、PWM、close)、`drive(gpio, name, speed)`、信号処理。新しいコードはここから `import` する。
-- `motor/straight.py`: 両輪を同時に回し、時間で止める。`FORWARD` で前進方向を定義。
+第2回の LED・センサ教材は `lesson02/` にある。GPIO の準備・終了処理は `lesson02/lesson_gpio.py` にまとめている。
 
-## テンプレ(lesson02/work/ に置く新しい走行プログラム)
-
-```python
-#!/usr/bin/env python3
-"""説明を 1 行で。車輪を浮かせてから実行すること。"""
-import argparse
-import sys
-import time
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "motor"))
-from motor_test import MOTORS, Gpio, drive, install_stop_signals  # noqa: E402
-
-MAX_SECONDS = 10.0
-
-
-def main():
-    p = argparse.ArgumentParser(description="説明")
-    p.add_argument("--speed", type=float, default=0.5, help="出力 0〜1")
-    p.add_argument("--seconds", type=float, default=1.0, help=f"時間 [秒]、上限 {MAX_SECONDS:g}")
-    p.add_argument("--dry-run", action="store_true")
-    a = p.parse_args()
-    if not 0.0 < a.speed <= 1.0 or not 0.0 < a.seconds <= MAX_SECONDS:
-        p.error("--speed は 0〜1、--seconds は 0 より大きく上限以下")
-
-    install_stop_signals()
-    gpio = None if a.dry_run else Gpio()
-    try:
-        drive(gpio, "A", a.speed)      # 右輪 正転
-        drive(gpio, "B", -a.speed)     # 左輪 逆転(その場で回る例)
-        if not a.dry_run:
-            time.sleep(a.seconds)
-    except KeyboardInterrupt:
-        print("中断")
-    finally:
-        if gpio is not None:
-            gpio.close()
-    print("停止。全ピンを Low にしました。")
-
-
-if __name__ == "__main__":
-    main()
-```
+モーターの完成版サンプルは開発用リポジトリに保持しており、この公開リポジトリには置かない。存在しないサンプルを import するコードは作らない。
 
 ## lgpio の要点
 

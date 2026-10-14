@@ -55,20 +55,23 @@ git clone -b group-a https://github.com/ishikuro-lab/seminar2.git ~/seminar2
 
 (`group-a` は自分の班に読み替え)
 
-## 4. モーターを動かす
+## 4. 第2回の教材を動かす
 
-```
-cd ~/seminar2/motor
-python3 motor_test.py --dry-run      # まず GPIO に触らず確認
-python3 motor_test.py                # 車輪を浮かせてから
-python3 straight.py                  # 床に置いて、前を空けてから
+リポジトリのルートから、教材と共通処理を作業場所へコピーします。
+
+```bash
+cd ~/seminar2
+mkdir -p lesson02/work
+cp -n lesson02/*.py lesson02/work/
+cd lesson02/work
+python3 led_on.py
 ```
 
-くわしくは [../motor/README.md](../motor/README.md)。
+LED は GPIO12 → 抵抗330 Ω → LED → GND に接続します。先に [第2回の配線と説明](../lesson02/README.md) を確認してください。
 
 ## 5. ファイルの編集
 
-- ラズパイ上で直接: `nano lesson02/work/robot.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
+- ラズパイ上で直接: `nano ~/seminar2/lesson02/work/led_on.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
 - PC で編集して運ぶ: PC で clone → 編集 → `git push` → ラズパイで `git pull`。使い慣れたエディタで書きたいときはこちら。
 - VS Code の Remote-SSH でラズパイのファイルを直接開くこともできます(重いときは PC 編集に切り替え)。
 

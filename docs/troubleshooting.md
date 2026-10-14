@@ -88,9 +88,6 @@ ssh seminar2@192.168.2.xx
 | 症状 | 何が起きているか | 対処 |
 |---|---|---|
 | `GPIO busy` と出る | 前に動かしたプログラムが終わらず、ピンをつかんだまま | `ps aux \| grep python` で番号(PID)を見つけて `kill <番号>`。消えなければ一度ログアウトして入り直す |
-| モーターが回らない・うなるだけ | 出力が小さい、電池切れ、電源スイッチが入っていない | `python3 motor/motor_test.py --dry-run` で値が出るか確認 → 電源スイッチと電池 → `--speed 0.6` のように出力を上げる |
-| 片側だけ回らない | 配線かコネクタの問題 | `--motor A` / `--motor B` で片側ずつ試し、コネクタの向きを見る |
-| 逆向きに進む | コネクタが逆 | `straight.py` の `FORWARD` を変えるか `--flip` |
 | `git push` が `GH013` で拒否される | `main` に push しようとした(`main` は先生だけ) | `git branch` で確認 → `git checkout group-a`(自分の班に読み替え)→ もう一度 `git push` |
 | `git push` で `Permission denied` / `403` | GitHub の認証が切れた、または招待を承諾していない | `gh auth status` で確認 → 切れていれば `gh auth login`。招待メールを承諾したか確認 |
 | `Your branch is behind` | 班の仲間が先に push した | `git pull` してから `git push` |

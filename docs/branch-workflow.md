@@ -17,7 +17,7 @@ flowchart LR
 
 | ブランチ | 誰が書くか | 内容 |
 |---|---|---|
-| `main` | 先生だけ | 教材(`lesson02/`、`motor/`、`docs/`) |
+| `main` | 先生だけ | 教材(`lesson02/`、`docs/`) |
 | `group-a` 〜 `group-d` | その班の受講生 | `main` の内容 + 班の作業(`lesson02/work/`) |
 
 受講生は `main` に push できません(GitHub の ruleset で止まります)。間違えて `main` に切り替えて作業しても、push のときにエラーになるだけでデータは消えません。
