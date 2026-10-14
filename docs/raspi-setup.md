@@ -64,14 +64,14 @@ cd ~/seminar2
 mkdir -p lesson02/work
 cp -n lesson02/*.py lesson02/work/
 cd lesson02/work
-python3 led_on.py
+python3 01_led_on.py
 ```
 
 LED は GPIO12 → 抵抗330 Ω → LED → GND に接続します。先に [第2回の配線と説明](../lesson02/README.md) を確認してください。
 
 ## 5. ファイルの編集
 
-- ラズパイ上で直接: `nano ~/seminar2/lesson02/work/led_on.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
+- ラズパイ上で直接: `nano ~/seminar2/lesson02/work/01_led_on.py`(保存は `Ctrl+O`、終了は `Ctrl+X`)
 - PC で編集して運ぶ: PC で clone → 編集 → `git push` → ラズパイで `git pull`。使い慣れたエディタで書きたいときはこちら。
 - VS Code の Remote-SSH でラズパイのファイルを直接開くこともできます(重いときは PC 編集に切り替え)。
 

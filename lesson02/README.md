@@ -4,12 +4,12 @@
 
 | 順番 | 内容 | スクリプト |
 |---|---|---|
-| 1 | LED を点ける・消す | `led_on.py` |
-| 2 | LED を点滅させる(ループ) | `led_blink.py` |
-| 3 | LED の明るさを変える(PWM) | `led_pwm.py`、`led_fade.py` |
+| 1 | LED を点ける・消す | `01_led_on.py` |
+| 2 | LED を点滅させる(ループ) | `02_led_blink.py` |
+| 3 | LED の明るさを変える(PWM) | `03_led_pwm.py`、`04_led_fade.py` |
 | 4 | 演習① | [exercises.md](exercises.md) |
-| 5 | ライントレースセンサを読む(1 ch) | `sensor_read.py` |
-| 6 | 8 ch まとめて読む | `sensor_8ch.py` |
+| 5 | ライントレースセンサを読む(1 ch) | `05_sensor_read.py` |
+| 6 | 8 ch まとめて読む | `06_sensor_8ch.py` |
 | 7 | 演習② | [exercises.md](exercises.md) |
 
 ## 準備
@@ -99,7 +99,7 @@ GPIO12 (物理32) ──[抵抗 330Ω]──>|── GND (物理34)
 
 **重要**: このセンサ基板の説明書には電源 5 V と書いてありますが、**3.3 V につないでください**。5 V で動かすと出力が 3.3 V を超え、Raspberry Pi の GPIO が壊れます。3.3 V でも動きます(感度が少し下がるので VR で調整します)。CN1 の端子の並びは基板のシルク印刷で確認してください。
 
-まずは OUT1 だけつないで `sensor_read.py` を試し、動いたら 8 本つなぎます。
+まずは OUT1 だけつないで `05_sensor_read.py` を試し、動いたら 8 本つなぎます。
 
 ## プログラムの基本形
 
@@ -129,9 +129,9 @@ led_off(12)  # 消す
 ## 実行のしかた
 
 ```
-python3 led_on.py
-python3 led_blink.py
-python3 led_pwm.py
+python3 01_led_on.py
+python3 02_led_blink.py
+python3 03_led_pwm.py
 ```
 
 Thonny では、ラズパイ側の `lesson_gpio.py` と同じフォルダに教材・演習を保存して実行します。ターミナルでは `Ctrl+C` で止められます。
@@ -149,12 +149,12 @@ dry_run()
 
 | ファイル | やること | 学ぶこと |
 |---|---|---|
-| `led_on.py` | 3 秒点灯して消す | 点灯・待つ・消灯 |
-| `led_blink.py` | 0.5 秒おきに点滅 | `while True` と `sleep`、Ctrl+C |
-| `led_pwm.py` | 明るさを 0〜100 % で固定 | PWM(高速に点滅させて明るさを変える) |
-| `led_fade.py` | ゆっくり明るく → 暗く | `for` ループで PWM の値を変える |
-| `sensor_read.py` | センサ 1 ch を読み続ける | 入力の基本、`read_sensor` |
-| `sensor_8ch.py` | 8 ch を一行で表示 | リストと `for` ループ、先頭の `sensor_pins` で番号を変える |
+| `01_led_on.py` | 3 秒点灯して消す | 点灯・待つ・消灯 |
+| `02_led_blink.py` | 0.5 秒おきに点滅 | `while True` と `sleep`、Ctrl+C |
+| `03_led_pwm.py` | 明るさを 0〜100 % で固定 | PWM(高速に点滅させて明るさを変える) |
+| `04_led_fade.py` | ゆっくり明るく → 暗く | `for` ループで PWM の値を変える |
+| `05_sensor_read.py` | センサ 1 ch を読み続ける | 入力の基本、`read_sensor` |
+| `06_sensor_8ch.py` | 8 ch を一行で表示 | リストと `for` ループ、先頭の `sensor_pins` で番号を変える |
 
 ## PWM とは
 
@@ -178,3 +178,5 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 | センサ基板の LED が全部点きっぱなし | 感度が高すぎる。VR を逆に回す |
 
 コピーの `-n` は、すでにある作業ファイルを上書きしない指定です。
+
+教材コードは `01_`〜`06_` の番号順に使います。`lesson_gpio.py` は読み込む共通ファイルなので、名前を変えずに一緒にコピーしてください。

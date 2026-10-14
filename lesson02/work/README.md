@@ -8,7 +8,7 @@
 mkdir -p lesson02/work
 cp -n lesson02/*.py lesson02/work/
 cd lesson02/work
-python3 led_on.py
+python3 01_led_on.py
 ```
 
 `lesson_gpio.py` は教材と同じフォルダに置いてください。個人のフォルダで作業する場合も、一緒にコピーします。
