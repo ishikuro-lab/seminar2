@@ -38,7 +38,7 @@ claude
 ```
 私は大学 1 年生で、Raspberry Pi Zero 2 W とブレッドボードで
 LED とセンサの使い方を学んでいます。Python 3 を使います。
-教材の lesson_gpio.py にある led_on、led_off、sleep、read_sensor を使ってください。
+教材の lesson_gpio.py にある led_on、led_off、sleep、read_distance を使ってください。
 with やクラスなどの難しい構文を避け、初心者向けに日本語で説明してください。
 ```
 

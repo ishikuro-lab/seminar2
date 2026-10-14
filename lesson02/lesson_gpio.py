@@ -14,6 +14,7 @@ class GPIO:
         self.outputs = set()
         self.inputs = set()
         self.signals = {}
+        self.last_distance_measurement = None
 
     def __enter__(self):
         if not self.dry_run:
@@ -58,17 +59,54 @@ class GPIO:
             else:
                 self.lgpio.tx_pwm(self.handle, pin, 1000, percent)
 
-    def read(self, pin):
-        if pin in self.outputs:
-            raise ValueError("出力に使っているピンは入力にできません")
-        if pin not in self.inputs:
+    def distance(self, trig=23, echo=24):
+        """HC-SR04の距離[cm]。応答なしはNone。受講生からは read_distance() で使う。"""
+        if trig == echo:
+            raise ValueError("TRIGとECHOは別のGPIOに接続してください")
+        if echo in self.outputs:
+            raise ValueError("ECHOに使うピンは出力にできません")
+        self._output(trig)
+        if echo not in self.inputs:
             if not self.dry_run:
-                self.lgpio.gpio_claim_input(self.handle, pin)
-            self.inputs.add(pin)
+                self.lgpio.gpio_claim_input(self.handle, echo)
+            self.inputs.add(echo)
         if self.dry_run:
-            print("GPIO", pin, "模擬入力：0")
-            return 0
-        return self.lgpio.gpio_read(self.handle, pin)
+            print("超音波センサの模擬入力：20 cm")
+            return 20.0
+
+        # 再測定は60 msより長い間隔を空ける。
+        if self.last_distance_measurement is not None:
+            wait = 0.065 - (time.monotonic() - self.last_distance_measurement)
+            if wait > 0:
+                time.sleep(wait)
+        self.last_distance_measurement = time.monotonic()
+        timeout = 0.03
+
+        # 前回のECHOがHighのままなら、Lowに戻るまで待つ。
+        deadline = time.monotonic() + timeout
+        while self.lgpio.gpio_read(self.handle, echo) == 1:
+            if time.monotonic() >= deadline:
+                return None
+        self.lgpio.gpio_write(self.handle, trig, 0)
+        time.sleep(0.000002)
+        self.lgpio.gpio_write(self.handle, trig, 1)
+        try:
+            time.sleep(0.00001)
+        finally:
+            self.lgpio.gpio_write(self.handle, trig, 0)
+
+        deadline = time.monotonic() + timeout
+        while self.lgpio.gpio_read(self.handle, echo) == 0:
+            if time.monotonic() >= deadline:
+                return None
+        start = time.monotonic()
+        deadline = start + timeout
+        while self.lgpio.gpio_read(self.handle, echo) == 1:
+            if time.monotonic() >= deadline:
+                return None
+        end = time.monotonic()
+        # 音速343 m/sを用い、往復時間から片道の距離へ変換する。
+        return round((end - start) * 34300 / 2, 1)
 
     def __exit__(self, kind, value, traceback):
         try:
@@ -115,8 +153,8 @@ def brightness(pin, percent):
     _call("brightness", pin, percent)
 
 
-def read_sensor(pin):
-    return _call("read", pin)
+def read_distance():
+    return _call("distance")
 
 
 def sleep(seconds):
@@ -136,7 +174,7 @@ def _cleanup():
 
 
 def dry_run():
-    """実機に触れず確認する。センサは模擬値0を返す。"""
+    """実機に触れず確認する。超音波センサは模擬距離20 cmを返す。"""
     global _dry_run
     _cleanup()
     _dry_run = True
