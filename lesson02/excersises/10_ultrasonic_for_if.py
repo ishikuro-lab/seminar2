@@ -7,9 +7,9 @@
 # 【作業の指示】
 # このコメントの下に、自分でコードを書いてください。
 # 字下げには半角スペース4個を使います。
-# read_distance：距離をcmで測る。print：表示する。sleep：待つ。
+# 05_distance_read.pyの測定処理を参考に、lgpioとtimeの関数を直接使います。
 # 距離がNoneの場合は測定できていません。Noneを数字と比較しないでください。
 # TRIGはGPIO23、ECHOは抵抗で分圧してGPIO24へ接続します。
 # 配線はlesson02/README.mdを先生と確認してください。
 # 超音波センサは班で共有します。実行は1人ずつ交代してください。
-# dry_runでGPIOに触れずに確認してから、実機で試してください。
+# 最後にTRIGをLowにし、lgpio.gpiochip_closeでGPIOを解放してください。

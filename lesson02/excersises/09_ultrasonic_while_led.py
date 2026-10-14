@@ -6,12 +6,12 @@
 # 【作業の指示】
 # このコメントの下に、自分でコードを書いてください。
 # 字下げには半角スペース4個を使います。
-# led_on：LEDを点ける。led_off：LEDを消す。sleep：指定した秒数だけ待つ。
+# lgpio.gpio_writeで点灯・消灯し、time.sleepで待ち時間を指定します。
 # LEDはGPIO12に接続し、抵抗330 Ωを必ず入れてください。
 # プログラムの最後にはLEDを消してください。
-# read_distance：距離をcmで測る。print：表示する。sleep：待つ。
+# 05_distance_read.pyの測定処理を参考に、lgpioとtimeの関数を直接使います。
 # 距離がNoneの場合は測定できていません。Noneを数字と比較しないでください。
 # TRIGはGPIO23、ECHOは抵抗で分圧してGPIO24へ接続します。
 # 配線はlesson02/README.mdを先生と確認してください。
 # 超音波センサは班で共有します。実行は1人ずつ交代してください。
-# dry_runでGPIOに触れずに確認してから、実機で試してください。
+# LEDは終了時に消灯し、最後にlgpio.gpiochip_closeでGPIOを解放してください。

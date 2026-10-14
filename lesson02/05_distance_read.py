@@ -1,10 +1,59 @@
-# HC-SR04 で距離を測る。配線は README を確認。
-from lesson_gpio import read_distance, sleep
+# HC-SR04で距離を10回測る。ECHOは分圧してGPIO24へ接続する。
+import lgpio
+import time
+import signal
 
-while True:
-    distance = read_distance()
-    if distance is None:
-        print("測れません")
-    else:
-        print(distance, "cm")
-    sleep(0.2)
+# SSH切断や終了要求も、中断として後片付けする。
+signal.signal(signal.SIGHUP, signal.default_int_handler)
+signal.signal(signal.SIGTERM, signal.default_int_handler)
+
+trig_pin = 23
+echo_pin = 24
+timeout = 0.03  # 応答を待つ上限[秒]
+h = lgpio.gpiochip_open(0)
+
+try:
+    lgpio.gpio_claim_output(h, trig_pin, 0)
+    lgpio.gpio_claim_input(h, echo_pin)
+    for i in range(10):
+        distance = None  # 測れなかった場合の値
+
+        # ECHOが前回のHighを保っていれば、今回は測らず次へ進む。
+        if lgpio.gpio_read(h, echo_pin) == 0:
+            # TRIGへ10 µsのHighを出し、超音波を送信する。
+            lgpio.gpio_write(h, trig_pin, 0)
+            time.sleep(0.000002)
+            lgpio.gpio_write(h, trig_pin, 1)
+            time.sleep(0.00001)
+            lgpio.gpio_write(h, trig_pin, 0)
+
+            # ECHOがHighになるまで待つ。上限時間を過ぎたら抜ける。
+            deadline = time.monotonic() + timeout
+            while lgpio.gpio_read(h, echo_pin) == 0:
+                if time.monotonic() >= deadline:
+                    break
+
+            if time.monotonic() < deadline:
+                start = time.monotonic()
+                deadline = start + timeout
+                # ECHOがLowになるまでの時間を測る。
+                while lgpio.gpio_read(h, echo_pin) == 1:
+                    if time.monotonic() >= deadline:
+                        break
+                end = time.monotonic()
+                if end < deadline:
+                    # 音速34300 cm/s × 往復時間 ÷ 2
+                    distance = round((end - start) * 34300 / 2, 1)
+
+        if distance is None:
+            print("測れません")
+        else:
+            print(distance, "cm")
+        time.sleep(0.2)  # 次の測定まで十分に間隔を空ける
+except KeyboardInterrupt:
+    print("中断しました")
+finally:
+    try:
+        lgpio.gpio_write(h, trig_pin, 0)
+    finally:
+        lgpio.gpiochip_close(h)

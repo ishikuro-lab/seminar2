@@ -109,58 +109,61 @@ HC-SR04 ECHO ──[1 kΩ]──┬── GPIO24（物理18）
 
 ## プログラムの基本形
 
-プログラムは上から順に実行します。GPIO の準備と後片付けは、同じフォルダの `lesson_gpio.py` にまとめています。この共通ファイルは編集せず、教材・演習のファイルと一緒に置いてください。中では `lgpio` を使います。
+独自の補助関数や共通ファイルは使わず、`lgpio` と `time` の関数を直接呼びます。GPIOの準備・操作・後片付けもコードで確認します。
 
 ```python
-from lesson_gpio import led_on, led_off, sleep
+import lgpio
+import time
 
-led_on(12)   # GPIO12 の LED を点ける
-sleep(3)     # 3秒待つ
-led_off(12)  # 消す
+h = lgpio.gpiochip_open(0)
+try:
+    lgpio.gpio_claim_output(h, 12, 0)
+    lgpio.gpio_write(h, 12, 1)
+    time.sleep(3)
+finally:
+    try:
+        lgpio.gpio_write(h, 12, 0)  # 終了前に消灯
+    finally:
+        lgpio.gpiochip_close(h)
 ```
 
-最初の `import` は道具の読み込みです。その下に、やりたい操作を順番に書きます。
+上は準備から解放までの流れです。教材の全文には、終了前の消灯と中断時の処理も記載しています。
 
-| 操作 | 書き方 |
+| 操作 | ライブラリの関数 |
 |---|---|
-| LED を点ける | `led_on(12)` |
-| LED を消す | `led_off(12)` |
-| 0.5秒待つ | `sleep(0.5)` |
-| PWM のデューティ比を50 %にする | `brightness(12, 50)` |
-| 距離を測る（cm） | `distance = read_distance()` |
-| 読んだ値を表示する | `print(value)` |
+| GPIOを使う準備 | `lgpio.gpiochip_open(0)` |
+| 出力に設定 | `lgpio.gpio_claim_output(h, 12, 0)` |
+| 点灯 | `lgpio.gpio_write(h, 12, 1)` |
+| 消灯 | `lgpio.gpio_write(h, 12, 0)` |
+| 0.5秒待つ | `time.sleep(0.5)` |
+| PWMを出す | `lgpio.tx_pwm(h, 12, 1000, 50)` |
+| 入力に設定 | `lgpio.gpio_claim_input(h, 24)` |
+| 入力を読む | `lgpio.gpio_read(h, 24)` |
+| 時刻を測る | `time.monotonic()` |
+| ピンを解放 | `lgpio.gpiochip_close(h)` |
 
-準備は最初の操作時に自動で行います。LED を点けたら最後に `led_off()` で消します。プログラム終了時のGPIO解放は共通ファイルが行います。繰り返すプログラムを `Ctrl+C` で止めた場合も、共通の操作処理で後片付けします。終了時に `KeyboardInterrupt` と表示されても、中断によるものです。
+`h` は開いたGPIOチップを指定する値です。`try` の中が終わったときも、エラーや中断が起きたときも、`finally` の終了処理を実行します。`05_distance_read.py` ではTRIG/ECHOの操作と距離計算を、`06_distance_led.py` では測定とLED制御を確認します。
 
 ## 実行のしかた
 
-```
+```bash
 cd ~/seminar2/lesson02
 python3 01_led_on.py
 python3 02_led_blink.py
-python3 03_led_pwm.py
+python3 05_distance_read.py
 ```
 
-Thonny では、ラズパイ側の `lesson_gpio.py` と同じフォルダに教材・演習を保存して実行します。ターミナルでは `Ctrl+C` で止められます。
-
-ピンを変えるときは `led_on(12)` などの番号と配線を変えます。点滅間隔は `sleep(0.5)` の数字、明るさは `brightness(12, 50)` の2つ目の数字を変えて試してください。
-
-まず GPIO に触れずに確認するときは、`import` の下に次の2行を追加します。PC でも動き、模擬出力を画面に表示します。超音波センサは模擬距離20 cmを返します。本番では追加した2行を外します。
-
-```python
-from lesson_gpio import dry_run
-dry_run()
-```
+ピン番号・点灯時間・回数を変えて試してください。途中で止めるときは `Ctrl+C` です。模擬GPIOでの検証と実機確認は別です。実機では配線を先生と確認してから実行します。
 
 ## 各スクリプト
 
 | ファイル | やること | 学ぶこと |
 |---|---|---|
 | `01_led_on.py` | 3 秒点灯して消す | 点灯・待つ・消灯 |
-| `02_led_blink.py` | 0.5 秒おきに点滅 | `while True` と `sleep`、Ctrl+C |
+| `02_led_blink.py` | 0.5 秒おきに10回点滅 | `for` と `time.sleep`、Ctrl+C |
 | `03_led_pwm.py` | 明るさを 0〜100 % で固定 | PWM(高速に点滅させて明るさを変える) |
-| `04_led_fade.py` | ゆっくり明るく → 暗く | `for` ループで PWM の値を変える |
-| `05_distance_read.py` | 距離を cm で表示 | `read_distance`、`print`、繰り返し |
+| `04_led_fade.py` | ゆっくり明るく → 暗くを3往復 | `for` ループで PWM の値を変える |
+| `05_distance_read.py` | 距離を cm で表示 | TRIG/ECHO、時間測定、距離計算 |
 | `06_distance_led.py` | 10 cmより近ければLED点灯 | `if` / `elif` / `else` |
 
 ## PWM とは
@@ -172,7 +175,7 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 デューティ比 75 %:  ‾‾‾|_|‾‾‾|_|‾‾‾|_  → 明るい
 ```
 
-`brightness(12, 50)` で「1000 Hz、デューティ比 50 %」になります。第 3 回のモーターの速度制御でも同じ仕組みを使います。
+`lgpio.tx_pwm(h, 12, 1000, 50)` で「1000 Hz、デューティ比 50 %」になります。第 3 回のモーターの速度制御でも同じ仕組みを使います。
 
 ## うまくいかないとき
 
@@ -185,7 +188,7 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 | 距離が不安定 | センサの正面に平らな物を置く。他のプログラムを止め、1人ずつ測る |
 
 
-教材コードは `01_`〜`06_` の番号順に使います。`lesson_gpio.py` は読み込む共通ファイルなので、名前を変えずに一緒にコピーしてください。
+教材コードは `01_`〜`06_` の番号順に使います。補助ファイルは不要です。
 
 ## 練習問題
 

@@ -19,15 +19,15 @@ description: Raspberry Pi Zero 2 W + DRV8833 でモーターや GPIO を安全�
 
 ## 安全手順(コードに必ず組み込む)
 
-1. `--dry-run` オプションを付け、GPIO に触らずに出す値を表示できるようにする。
+1. 第2回教材は模擬GPIO環境で動作確認し、GPIOに触れず検証する。
 2. 走行時間に上限(例 10 秒)。`time.sleep` で待ち、ループで回し続けない。
 3. `try/finally` で終了時に全ピン Low、`gpio_free`、`gpiochip_close`。
-4. `SIGHUP` / `SIGTERM` を受けたら `SystemExit` にして `finally` を通す(SSH 切断対策)。信号処理は共通ファイル側へまとめる。
+4. `SIGHUP` / `SIGTERM` を受けたら `SystemExit` にして `finally` を通す(SSH 切断対策)。教材では `signal.default_int_handler` を直接登録し、新たな関数は作らない。
 5. 実行手順を README に書く: dry-run → 車輪を浮かせて → 床に置いて前を空ける。
 
 ## 公開中の教材
 
-第2回の LED・センサ教材は `lesson02/` にある。GPIO の準備・終了処理は `lesson02/lesson_gpio.py` にまとめている。
+第2回の LED・センサ教材は `lesson02/` にある。GPIO の準備・測定・終了処理も各教材内に書く。独自の補助関数・共通ファイルは追加せず、`lgpio` と `time` の関数を直接使う。
 
 モーターの完成版サンプルは開発用リポジトリに保持しており、この公開リポジトリには置かない。存在しないサンプルを import するコードは作らない。
 
