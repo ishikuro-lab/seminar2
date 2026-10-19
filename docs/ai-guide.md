@@ -6,7 +6,7 @@
 
 1. AI が書いたコードは、まず **読んで説明できる** ようにする。わからない行は AI に「この行は何をしているか」を聞く。
 2. 配線とコードを先生に確認してもらってからラズパイで動かす。
-3. `lesson02/` 直下の教材は AI にも編集させない。`lesson02/excersises/` で作業する。
+3. 先生の教材(`lesson02/` と `lesson02/excersises/`)は AI にも編集させない。自分のフォルダ `students/自分のユーザー名/` で作業する。
 4. AI の出力をそのままレポートに貼らない。自分の言葉に直す。
 5. 班の仲間にも、何を AI に頼んだか共有する(自分の練習コードのコメント に書く)。
 
@@ -24,7 +24,7 @@ claude
 
 リポジトリの `CLAUDE.md` と `.claude/skills/` を自動で読みます。例:
 
-- 「raspi-gpio スキルを読んで、LEDを3秒点灯するプログラムを lesson02/excersises/ に作って。with やクラスは使わないで」
+- 「raspi-gpio スキルを読んで、LEDを3秒点灯するプログラムを students/自分のユーザー名/lesson02/ に作って。with やクラスは使わないで」
 - 「lesson02/01_led_on.py を1行ずつ説明して」
 
 ### Codex CLI / Gemini CLI / GitHub Copilot(VS Code)
