@@ -18,7 +18,7 @@ flowchart LR
 | ブランチ | 誰が書くか | 内容 |
 |---|---|---|
 | `main` | 先生だけ | 教材(`lesson02/`、`docs/`) |
-| `group-a` 〜 `group-d` | その班の受講生 | `main` の内容 + 班の作業(`lesson02/excersises/`) |
+| `group-a` 〜 `group-d` | その班の受講生(5 人それぞれのアカウントから) | `main` の内容 + 1 人ずつの作業(`students/ユーザー名/`) |
 
 受講生は `main` に push できません(GitHub の ruleset で止まります)。間違えて `main` に切り替えて作業しても、push のときにエラーになるだけでデータは消えません。
 
@@ -28,18 +28,21 @@ flowchart LR
 cd ~/seminar2
 git branch                    # * group-a のように自分の班か確認
 git pull                      # 教材と仲間の変更を取り込む
-# lesson02/excersises/ の下で編集・実行
+# students/自分のユーザー名/ の下で編集・実行
 git status                    # 何を変えたか確認
-git add lesson02/excersises/                 # lesson02/excersises/ の変更だけを追加
+git add students/$USER/       # 自分のフォルダの変更だけを追加($USER は自分のユーザー名)
 git commit -m "直進のテストを追加"
+git pull                      # 仲間が先に push していたら取り込む
 git push
 ```
+
+班の 5 人が同じブランチに push します。仲間が先に push していると、`git push` が `rejected (fetch first)` で拒否されます。`git pull` してからもう一度 `git push` すれば通ります。各自が自分のフォルダだけを触っていれば衝突しません。
 
 コミットメッセージは「何をしたか」を一言で。日本語でかまいません。
 
 ## 衝突したとき
 
-同じファイルの同じ場所を 2 人が別々に直すと、`git pull` のときに `CONFLICT` と表示されます。
+同じファイルの同じ場所を 2 人が別々に直すと、`git pull` のときに `CONFLICT` と表示されます。自分のフォルダ以外を編集しなければ、ふつうは起きません。
 
 1. `git status` で `both modified` のファイルを見る。
 2. そのファイルを開くと、こういう印があります。
@@ -61,6 +64,7 @@ git push
 
 - `git push --force`(履歴を書き換える)。ruleset で拒否されますが、やらないでください。
 - 他の班のブランチへの push。
-- `lesson02/` 直下の教材の編集(教材の更新と衝突します)。作業は `lesson02/excersises/` に置きます。
+- 先生の教材と問題(`lesson02/`、`lesson02/excersises/`)の編集(教材の更新と衝突します)。作業は `students/自分のユーザー名/` に置きます。
+- 他の人のフォルダ(`students/他の人/`)の編集。
 
 Git のコマンドそのものがはじめての人は [git-basics.md](git-basics.md) を先に読んでください。

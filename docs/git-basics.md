@@ -57,22 +57,25 @@ flowchart LR
 | `git branch` | 今どのブランチにいるか確かめる(作業の最初) | `* group-a` のように `*` が今の場所 |
 | `git status` | 何を変えたか、add 済みか確かめる(迷ったらまずこれ) | 赤 = まだ add していない、緑 = add 済み |
 | `git pull` | 作業の最初に、教材や仲間の変更を取り込む | 取り込んだファイル名 |
-| `git add lesson02/excersises/` | `lesson02/excersises/` の変更を記録する候補にする | 何も出ない(成功) |
+| `git add students/$USER/` | 自分のフォルダの変更を記録する候補にする(`$USER` は自分のユーザー名) | 何も出ない(成功) |
 | `git commit -m "メッセージ"` | 記録する | `1 file changed, 10 insertions(+)` など |
 | `git push` | GitHub に送る | `group-a -> group-a` など |
 | `git log --oneline -5` | 最近の記録 5 件を見る | 番号とメッセージの一覧 |
 | `git diff` | 編集した中身を見る(add する前) | `+` が追加した行、`-` が消した行 |
 
-毎回の流れは次の 6 行だけです。
+毎回の流れは次の 7 行だけです。
 
 ```
 cd ~/seminar2
 git branch
 git pull
-git add lesson02/excersises/
+git add students/$USER/
 git commit -m "直進のテストを追加"
+git pull
 git push
 ```
+
+push の直前にもう一度 `git pull` するのは、班の仲間が先に push していることがあるからです。
 
 ## 5. GitHub の画面の見方
 
@@ -87,7 +90,8 @@ https://github.com/ishikuro-lab/seminar2 を開くと:
 | メッセージ | 意味 | どうする |
 |---|---|---|
 | `nothing to commit, working tree clean` | 変更がない(記録済み) | 何もしなくてよい |
-| `Changes not staged for commit` | 編集したが add していない | `git add lesson02/excersises/` |
+| `Changes not staged for commit` | 編集したが add していない | `git add students/$USER/` |
+| `rejected ... (fetch first)` | 仲間が先に push した | `git pull` してからもう一度 `git push` |
 | `Your branch is behind 'origin/group-a'` | 仲間が先に push した | `git pull` |
 | `Your branch is ahead of 'origin/group-a' by 1 commit` | commit したが push していない | `git push` |
 | `CONFLICT (content): Merge conflict in ...` | 同じ場所を別々に直した | [branch-workflow.md](branch-workflow.md) の「衝突したとき」 |
