@@ -5,7 +5,6 @@
 #   bash pi-setup.sh group-a        # 自分の班名
 #
 # やること:
-#   - 古い clone(~/sogo-kyoiku-seminar, ~/sogo-dev)を ~/old/ に退避
 #   - ~/seminar2 に班のブランチを clone
 #   - git の基本設定(pull は merge、push は現在のブランチのみ)
 #
@@ -19,14 +18,6 @@ case "$group" in
 esac
 
 REPO_URL="https://github.com/ishikuro-lab/seminar2.git"
-mkdir -p ~/old
-for d in ~/sogo-kyoiku-seminar ~/sogo-dev; do
-  if [ -d "$d" ]; then
-    mv "$d" ~/old/"$(basename "$d")-$(date +%Y%m%d)"
-    echo "退避: $d -> ~/old/"
-  fi
-done
-
 if [ -d ~/seminar2/.git ]; then
   echo "~/seminar2 は既にあります。ブランチを $group に合わせます。"
   git -C ~/seminar2 fetch origin
