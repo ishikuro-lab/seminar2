@@ -1,4 +1,4 @@
-# 第 2 回 — LED を光らせる・センサを読む
+# 第 2 回 — LED を光らせる
 
 今回はロボット基板を使わず、**ブレッドボード**で配線して Raspberry Pi の GPIO の使い方を学びます。
 
@@ -7,19 +7,21 @@
 | 1 | LED を点ける・消す | `01_led_on.py` |
 | 2 | LED を点滅させる(ループ) | `02_led_blink.py` |
 | 3 | LED の明るさを変える(PWM) | `03_led_pwm.py`、`04_led_fade.py` |
-| 4 | 演習① | `excersises/01_led_*.py`〜`05_led_*.py` |
-| 5 | 超音波センサで距離を測る | `05_distance_read.py` |
-| 6 | 距離に応じて LED を点ける | `06_distance_led.py` |
-| 7 | 演習② | `excersises/06_ultrasonic_*.py`〜`10_ultrasonic_*.py` |
+| 4 | 演習 | `excersises/01_led_*.py`〜`05_led_*.py`(自分のフォルダにコピーして解く) |
+
+超音波センサで距離を測る教材は第 3 回([lesson03/README.md](../lesson03/README.md))に移りました。
 
 ## 準備
 
 ```
 cd ~/seminar2
 git pull
-mkdir -p lesson02/excersises
-cd lesson02/excersises
+mkdir -p students/$USER/lesson02
+cp -n lesson02/excersises/*.py students/$USER/lesson02/
+cd students/$USER/lesson02
 ```
+
+`$USER` は自分のユーザー名(姓)に置き換わります。先生の教材(`lesson02/`)と問題(`lesson02/excersises/`)は編集せず、自分のフォルダ `students/自分のユーザー名/lesson02/` にコピーしたものを使います。`cp -n` は、すでにあるファイルを上書きしないので、2 回目に打っても自分の答えは消えません。
 
 ## GPIO とは
 
@@ -59,13 +61,10 @@ Raspberry Pi の端にある 40 本のピンのうち、プログラムから「
 | 用途 | GPIO | 物理ピン |
 |---|---|---|
 | LED | GPIO12 | 32 |
-| 超音波センサ TRIG | GPIO23 | 16 |
-| 超音波センサ ECHO（分圧後） | GPIO24 | 18 |
-| 超音波センサ VCC（5 V） | — | 2 または 4 |
 | 3.3 V | — | 1 または 17 |
 | GND | — | 6, 9, 14, 20, 25, 30, 34, 39 のどれか |
 
-## 配線 1: LED
+## 配線: LED
 
 ```
 GPIO12 (物理32) ──[抵抗 330Ω]──>|── GND (物理34)
@@ -76,37 +75,6 @@ GPIO12 (物理32) ──[抵抗 330Ω]──>|── GND (物理34)
 - 抵抗は電流を抑えるために必ず入れます(無いと LED や GPIO が壊れます)。330 Ω で約 5 mA 流れます。
 - 配線は **ラズパイの電源を切ってから**、または最低限プログラムを止めてから触ります。
 
-## 配線 2: 超音波距離センサ（HC-SR04、5 V版）
-
-超音波を出して、物に反射して戻るまでの時間から距離を測ります。班で1個のセンサを使い、距離測定のプログラムは1人ずつ交代で実行してください。複数人から同時に動かさないでください。
-
-| センサ端子 | つなぐ先 |
-|---|---|
-| VCC | 5 V（物理2） |
-| GND | GND（物理6） |
-| TRIG | GPIO23（物理16） |
-| ECHO | **抵抗で電圧を下げてから** GPIO24（物理18） |
-
-**ECHOをGPIOへ直接つながないでください。** HC-SR04の電源は5 Vですが、ラズパイのGPIOは3.3 Vの入力です。電源と信号の電圧を区別します。
-
-ECHOの信号は、次の2本の抵抗で約3.0 Vへ下げます。
-
-```text
-HC-SR04 ECHO ──[1 kΩ]──┬── GPIO24（物理18）
-                       │
-                    [1.5 kΩ]
-                       │
-                      GND
-```
-
-抵抗の順番・値を確認し、電源を切って配線してから先生に確認してもらいます。VCCは5 Vへ接続し、LED用の抵抗330 Ωと混同しないでください。
-
-`05_distance_read.py` を実行し、まず定規で10 / 20 / 30 cmに物を置いて表示を比べます。測定できないときは「測れません」と表示します。次に `06_distance_led.py` で、10 cmより近いときにLEDが点くことを確認します。
-
-距離は目安です。Pythonの処理時間や反射する物によって値が揺れることがあります。実機での精度は授業前に確認してください。
-
-参考：[HC-SR04データシート](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf)、[Raspberry PiのGPIO仕様](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html)
-
 ## プログラムの基本形
 
 独自の補助関数や共通ファイルは使わず、`lgpio` と `time` の関数を直接呼びます。GPIOの準備・操作・後片付けもコードで確認します。
@@ -115,19 +83,17 @@ HC-SR04 ECHO ──[1 kΩ]──┬── GPIO24（物理18）
 import lgpio
 import time
 
-h = lgpio.gpiochip_open(0)
+h = lgpio.gpiochip_open(0)  # GPIOを使う準備
 try:
-    lgpio.gpio_claim_output(h, 12, 0)
-    lgpio.gpio_write(h, 12, 1)
+    lgpio.gpio_claim_output(h, 12, 0)  # 出力に設定
+    lgpio.gpio_write(h, 12, 1)         # 点灯
     time.sleep(3)
 finally:
-    try:
-        lgpio.gpio_write(h, 12, 0)  # 終了前に消灯
-    finally:
-        lgpio.gpiochip_close(h)
+    lgpio.gpio_write(h, 12, 0)  # 途中で止めても必ず消灯
+    lgpio.gpiochip_close(h)     # ピンを解放
 ```
 
-上は準備から解放までの流れです。教材の全文には、終了前の消灯と中断時の処理も記載しています。
+上は準備から解放までの流れです。教材の全文には、`Ctrl+C` で止めたときの処理(`except KeyboardInterrupt`)も記載しています。
 
 | 操作 | ライブラリの関数 |
 |---|---|
@@ -137,12 +103,9 @@ finally:
 | 消灯 | `lgpio.gpio_write(h, 12, 0)` |
 | 0.5秒待つ | `time.sleep(0.5)` |
 | PWMを出す | `lgpio.tx_pwm(h, 12, 1000, 50)` |
-| 入力に設定 | `lgpio.gpio_claim_input(h, 24)` |
-| 入力を読む | `lgpio.gpio_read(h, 24)` |
-| 時刻を測る | `time.monotonic()` |
 | ピンを解放 | `lgpio.gpiochip_close(h)` |
 
-`h` は開いたGPIOチップを指定する値です。`try` の中が終わったときも、エラーや中断が起きたときも、`finally` の終了処理を実行します。`05_distance_read.py` ではTRIG/ECHOの操作と距離計算を、`06_distance_led.py` では測定とLED制御を確認します。
+`h` は開いたGPIOチップを指定する値です。`try` の中が終わったときも、エラーや中断が起きたときも、`finally` の終了処理を実行します。
 
 ## 実行のしかた
 
@@ -150,7 +113,6 @@ finally:
 cd ~/seminar2/lesson02
 python3 01_led_on.py
 python3 02_led_blink.py
-python3 05_distance_read.py
 ```
 
 ピン番号・点灯時間・回数を変えて試してください。途中で止めるときは `Ctrl+C` です。模擬GPIOでの検証と実機確認は別です。実機では配線を先生と確認してから実行します。
@@ -163,8 +125,6 @@ python3 05_distance_read.py
 | `02_led_blink.py` | 0.5 秒おきに10回点滅 | `for` と `time.sleep`、Ctrl+C |
 | `03_led_pwm.py` | 明るさを 0〜100 % で固定 | PWM(高速に点滅させて明るさを変える) |
 | `04_led_fade.py` | ゆっくり明るく → 暗くを3往復 | `for` ループで PWM の値を変える |
-| `05_distance_read.py` | 距離を cm で表示 | TRIG/ECHO、時間測定、距離計算 |
-| `06_distance_led.py` | 10 cmより近ければLED点灯 | `if` / `elif` / `else` |
 
 ## PWM とは
 
@@ -184,14 +144,12 @@ PWM(Pulse Width Modulation)は、High と Low を高速に切り替え、High �
 | LED が点かない | 向き(長い足が抵抗側)、GPIO 番号、GND に戻っているか |
 | `GPIO busy` | 前のプログラムが残っている。`ps aux \| grep python` → `kill 番号` |
 | `ModuleNotFoundError: lgpio` | ラズパイ以外で実行している。ラズパイで実行する |
-| 「測れません」と出る | VCCが5 Vか、GNDが共通か、TRIG/ECHOが逆でないか、ECHOの分圧を先生と確認 |
-| 距離が不安定 | センサの正面に平らな物を置く。他のプログラムを止め、1人ずつ測る |
 
 
-教材コードは `01_`〜`06_` の番号順に使います。補助ファイルは不要です。
+教材コードは `01_`〜`04_` の番号順に使います。補助ファイルは不要です。
 
 ## 練習問題
 
-`excersises/` に LED 5問と超音波センサ5問があります。練習は `cd ~/seminar2/lesson02/excersises` の後、例えば `python3 01_led_five_seconds.py` で実行します。問題文と指示は各 Python ファイルのコメントにあります。コメントの下に自分でコードを書いてから実行してください。
+`excersises/` にLEDの練習問題が5問あります。「準備」で自分のフォルダにコピーしたものを解きます。練習は `cd ~/seminar2/students/$USER/lesson02` の後、例えば `python3 01_led_five_seconds.py` で実行します。問題文と指示は各 Python ファイルのコメントにあります。コメントの下に自分でコードを書いてから実行してください。
 
-練習問題は01〜10の順に進めます。LEDの01〜05、超音波センサの06〜10で、順番に実行・`for`・`while`・`if`を段階的に学びます。ループは関数ではなく、処理を繰り返す構文です。
+練習問題は01〜05の順に進めます。順番に実行・`for`・`while`・`if`を段階的に学びます。ループは関数ではなく、処理を繰り返す構文です。

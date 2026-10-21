@@ -14,7 +14,7 @@
 - モーターを回すコードは、必ず **車輪を浮かせて** 試す手順を書く。床に置くのは直進のテストが済んでから。
 - LED・超音波教材では `lgpio` と標準ライブラリの関数を直接使い、準備・測定・終了処理も教材内に書く。新しいコードはGPIOを模擬した環境で確認してから実機で試す。
 - 走行時間に上限を付ける(例: 最大 10 秒)。無限ループでモーターを回しっぱなしにしない。
-- 終了時・例外時・`Ctrl + C`・SSH 切断時に全ピンを Low にする(`finally` と `SIGHUP/SIGTERM` の処理)。
+- 終了時・例外時・`Ctrl + C` で全ピンを Low にする(`finally`)。モーターを回すコードでは SSH 切断でも止まるように `SIGHUP/SIGTERM` も処理する。LED・センサ教材(`lesson02/` の LED と `lesson03/ultrasonic/` の超音波)は初学者向けに簡単さを優先し、`signal` は入れない。
 - 配線: A 側 GPIO17/18(J4)、B 側 GPIO22/19(J5)。DRV8833 の有効化ピンは基板上で 3.3V 固定。`.claude/skills/raspi-gpio/SKILL.md` を参照。
 - `sudo` が必要な操作(apt、ホスト名変更、ネットワーク設定)は、受講生にはできない。コマンドを示して管理者に依頼してもらう。
 
@@ -22,8 +22,9 @@
 
 - `main` は先生専用。受講生は push できない(ruleset で保護)。PR も先生がマージする。
 - 班の作業は `group-a` 〜 `group-d`。ユーザーがどの班か確認してから作業する(`git branch`)。
-- `lesson02/` 直下は先生が配る教材。**編集しない**。コピーして `lesson02/excersises/` で使う。
-- 班の成果物は `lesson02/excersises/` に置く。他の班のフォルダやブランチは触らない。
+- 受講生はラズパイに自分のアカウント(ユーザー名 = 姓のローマ字)を持ち、自分の `~/seminar2` で作業する。`whoami` で確認する。
+- `lessonNN/` の教材と `lessonNN/excersises/` の問題は先生が配るもの。**編集しない**。`students/<自分のユーザー名>/lessonNN/` にコピーして使う。
+- 自分の成果物は `students/<自分のユーザー名>/` だけに置く。他の人のフォルダ、他の班のブランチは触らない。
 - `.claude/skills/group-git-workflow/SKILL.md` の手順で pull → 作業 → commit → push。
 
 ## 環境
