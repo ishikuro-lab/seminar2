@@ -91,33 +91,65 @@ HC-SR04 ECHO ──[1 kΩ]──┬── GPIO24（物理18）
 
 1. センサは班で1個。実行は声をかけて **1人ずつ交代** する(同時に動かすと `GPIO busy`)。
 2. 配線は **電源を切ってから** 触る。通電する前に、ECHOの分圧(1 kΩ + 1.5 kΩ)を先生に確認してもらう。
-3. 距離が表示されずに止まったら、配線のまちがいです。`Ctrl + C` で止めて配線を見直します。
+3. 「測れません」が続いたら `Ctrl + C` で止めます。物の位置・向きや配線を先生と確認します。配線だけが原因とは限りません。
 
-## 距離の測り方(プログラムの中身)
+## 関数を使って距離を測る
 
-TRIGを一瞬だけHighにすると、センサが超音波を出します。ECHOは、超音波が出た瞬間にHighになり、反射が戻ってくるとLowに戻ります。つまり **ECHOがHighだった時間** が、音が往復した時間です。
+まず `01_distance_read.py` を読みます。準備の後、次の処理を10回繰り返します。
 
 ```python
-while lgpio.gpio_read(h, echo_pin) == 0:
-    pass                   # Highになるまで待つ
-start = time.monotonic()   # 超音波が出た時刻
-
-while lgpio.gpio_read(h, echo_pin) == 1:
-    pass                   # Lowに戻るまで待つ
-end = time.monotonic()     # 反射が戻ってきた時刻
-
-distance = round((end - start) * 34300 / 2, 1)
+distance = read_distance(h)
+if distance is None:
+    print("測れません")
+else:
+    print(distance, "cm")
+time.sleep(0.5)
 ```
 
-音は1秒に34300 cm進みます。往復した距離なので2で割ると、物までの距離になります。
+- **定義**：`hcsr04.py` の `def read_distance(h):` は、距離を1回測る処理に名前を付けます。定義しただけでは測りません。
+- **呼び出し**：`read_distance(h)` と書くと、その処理が動きます。
+- **戻り値**：`return` で結果を返します。`distance = read_distance(h)` は返ってきた距離を変数に入れます。
+- **引数**：関数へ渡す値です。`time.sleep(0.5)` の `0.5` は「待つ秒数」。`read_distance(h)` には `setup_gpio()` が返した `h`（GPIOを使うための番号）を渡します。
 
-第 2 回で使った関数に、入力用の3つが増えます。
+測れないときは数値の代わりに `None`（値がない）を返します。`0 cm` とは別です。`02_distance_led.py` は `None` なら消灯し、距離が10 cm未満のときだけ点灯します。演習は20 cm未満にします。判定には表示と同じ小数1桁の距離を使います。
 
-| 操作 | ライブラリの関数 |
-|---|---|
-| 入力に設定 | `lgpio.gpio_claim_input(h, 24)` |
-| 入力を読む | `lgpio.gpio_read(h, 24)` |
-| 時刻を測る | `time.monotonic()` |
+## 距離の測り方（関数の中身）
+
+次に **同じフォルダの `hcsr04.py` を開き、`def read_distance(h):` を読みます**。01/02の `from hcsr04 import ...` は、このファイルで定義した関数を使うための行です。準備は `setup_gpio`、測定は `read_distance`、終了は `close_gpio` の3つです。
+
+1. TRIGを10マイクロ秒だけHighにして、測定の合図を送ります。
+2. ECHOがHighになった時刻 `start` と、Lowに戻った時刻 `end` を記録します。**ECHOがHighだった時間** が音の往復時間です。
+3. `return round((end - start) * 34300 / 2, 1)` で距離を返します。音速34300 cm/秒を掛け、往復なので2で割り、小数1桁にします。
+
+`time.monotonic()` は経過時間を測る時計です。`deadline` は待つ期限で、High待ち・Low待ちがそれぞれ0.03秒を超えたら `None` を返します。測定前からECHOがHighの場合も `None` にします。成功・失敗のどちらでも次まで0.5秒待ちます。
+
+`finally` は正常終了・エラー・Ctrl+Cの後片付けです。`close_gpio` が出力をLowにし、`gpiochip_close` で入力を含めてピンを解放します。ECHOは入力なので書き込みません。
+
+## 超音波の実行と教材の更新
+
+自分のアカウントでSSH接続し、上の準備でコピーした後に実行します。Sambaでは自分のファイルを編集し、実行はSSHの画面で行います。
+
+```sh
+source ~/venv/bin/activate
+cd ~/seminar2/students/$USER/lesson03/ultrasonic
+python3 01_distance_read.py
+python3 02_distance_led.py
+```
+
+両方とも10回で終了し、途中で止めるときはCtrl+Cです。演習は `near_led.py` にwhile文で5回測るコードを書きます。
+
+すでにコピー済みの場合、`git pull` で原本は更新されても `cp -n` は自分のファイルを上書きしません。自分の変更と見比べて使ってください。新しい例と補助ファイルを別のフォルダへコピーすれば、元のコードや演習の解答を残せます。
+
+```sh
+cd ~/seminar2
+git pull
+mkdir -p students/$USER/lesson03/ultrasonic_updated
+cp -n lesson03/ultrasonic/*.py students/$USER/lesson03/ultrasonic_updated/
+cd students/$USER/lesson03/ultrasonic_updated
+python3 01_distance_read.py
+```
+
+`hcsr04.py` も01/02と同じフォルダに必要です。更新用フォルダがすでにあれば、さらに別名を使ってください。演習の解答は上書きしません。
 
 ---
 
@@ -166,47 +198,60 @@ DRV8833 は 1 つのモーターを 2 本の入力(IN1、IN2)で制御します�
 
 速さを変えたいときは、High にする側を PWM にします(デューティ比が大きいほど速い)。
 
-## プログラムの基本形
+## 関数を使ってモーターを動かす
+
+まず `01_motor_on_off.py` を読みます。超音波と同じく、`setup_gpio` で準備し、`finally` の `close_gpio` で片付けます。
 
 ```python
-import lgpio
-import time
-
-in1 = 17  # A 側 (右)
-in2 = 18
-
-h = lgpio.gpiochip_open(0)
+h = setup_gpio(pins)
 try:
-    lgpio.gpio_claim_output(h, in1, 0)  # 最初は両方 Low = 停止
-    lgpio.gpio_claim_output(h, in2, 0)
-    lgpio.gpio_write(h, in1, 1)         # 正転
-    lgpio.gpio_write(h, in2, 0)
-    time.sleep(2)
+    set_speed(h, in1, in2, 100)
+    time.sleep(seconds)
 finally:
-    lgpio.gpio_write(h, in1, 0)         # 必ず止める
-    lgpio.gpio_write(h, in2, 0)
-    lgpio.gpiochip_close(h)
+    close_gpio(h, pins)
 ```
 
-第 2 回の LED と同じ形です。違いは「ピンが 2 本」と「終了時に必ず止める」ことの重みです。
+- **定義**：同じフォルダの **`motor_gpio.py` を開き、`def set_speed(h, in1, in2, speed):` を読みます**。`from motor_gpio import ...` はその関数を使うための行です。
+- **呼び出しと引数**：`set_speed(h, in1, in2, 50)` は、使うGPIOの番号 `h`、モーターの2本のピン、速さ50%を渡して回します。速さ0は停止、100はHigh、途中はPWMです。
+- **戻り値**：`setup_gpio(pins)` は準備したGPIOを使うための番号を返し、`h`に入れます。`set_speed`・`stop_motor`・`close_gpio` は動作を行う関数なので、結果を変数に入れません。
+- **止める**：`stop_motor(h, pins)` はPWMを0にして全ピンをLowにします。`close_gpio(h, pins)` は停止してGPIOを解放します。
 
-教材のスクリプトには、これに `signal` の 2 行が入っています。**SSH が切れてもモーターが止まる** ようにするためです。切れたときも `finally` を通します。
+`pins = [in1, in2]` は使うピンのリストです。両輪の演習では4本を入れます。A側は17/18、B側は22/19です。番号や配線は上の表で確認してください。
+
+## 向きとPWMの仕組み
+
+`set_speed` は反対側のPWMを0にしてLowにしてから、回す側へ出力します。正転は `set_speed(h, in1, in2, 100)`、逆転は2本の順番を入れ替えた `set_speed(h, in2, in1, 100)` です。
+
+**逆転前は `stop_motor` で止め、`time.sleep(1)` で1秒待ちます。** `02_motor_reverse.py` で、その順番を確認してください。急に逆転させるとモーターと電池に大きな電流が流れます。
+
+`motor_gpio.py` の `lgpio.tx_pwm(h, in1, 1000, speed)` がPWMの出力です。第2回のLEDと同じく出力の割合を変え、モーターの速さを変えます。停止時はPWMを0にするだけでなく、全ピンをLowにします。100%はPWMではなくHighを出します。
+
+`setup_gpio` にはSIGHUP・SIGTERMを受けたときも `finally` へ進む処理があります。Ctrl+C、正常終了、エラーでも停止・解放を試みます。SSHが切れた瞬間に必ず信号が届くとは限らないため、回す時間を短くし、異常時はモーター電源を切ってください。
 
 ## 実行のしかた
 
-```
-python3 01_motor_on_off.py       # A 側を 2 秒回す (車輪を浮かせて)
-python3 03_motor_pwm.py          # 速さ 50 % で 2 秒
+自分のアカウントでSSH接続し、上の準備でコピーしてから実行します。Sambaでは編集し、実行はSSHの画面で行います。
+
+```sh
+source ~/venv/bin/activate
+cd ~/seminar2/students/$USER/lesson03/motor
+python3 01_motor_on_off.py  # A側を2秒回す。まずsecondsを1にして車輪を浮かせる
+python3 03_motor_pwm.py    # 50%で2秒回す
 ```
 
-速さ・秒数・使う側(A か B)は、**ファイルの先頭の変数** を書き換えて変えます。引数はありません。
+速さ・秒数・使う側はファイルの先頭の変数で変えます。回す時間は合計10秒以内です。04は最大速度を0〜100の10刻みにし、1段階0.1秒で加速・減速します。待ち時間を長くしすぎないでください。実行用のコマンドに引数はありません。
 
-```python
-in1 = 17     # A 側を使う。B 側にしたいときは 22
-in2 = 18     # A 側を使う。B 側にしたいときは 19
-speed = 50   # 速さ 0〜100 [%]
-seconds = 2  # 回す秒数。10 秒より長くしない
+すでにコピー済みのコードを残して新しい例を試す場合は、別フォルダへコピーします。
+
+```sh
+cd ~/seminar2
+git pull
+mkdir -p students/$USER/lesson03/motor_updated
+cp -n lesson03/motor/*.py students/$USER/lesson03/motor_updated/
+cd students/$USER/lesson03/motor_updated
 ```
+
+`motor_gpio.py` も同じフォルダに必要です。更新用フォルダがすでにあれば、さらに別名にします。`cp -n` は既存の解答を上書きしません。
 
 ---
 
@@ -225,7 +270,7 @@ seconds = 2  # 回す秒数。10 秒より長くしない
 
 | 症状 | 確認すること |
 |---|---|
-| 距離が表示されずに止まる | 配線のまちがい。VCCが5 Vか、GNDが共通か、TRIG/ECHOが逆でないか、ECHOの分圧を先生と確認。`Ctrl + C` で止める |
+| 「測れません」が続く | 物の距離・向き・反射を確認。Ctrl+Cで止め、VCC 5 V・共通GND・TRIG/ECHO・分圧を先生と確認 |
 | 距離が不安定 | センサの正面に平らな物を置く。他のプログラムを止め、1人ずつ測る |
 | 回らない、うなるだけ | モーター電源スイッチ、電池。`03_motor_pwm.py` の `speed` を 60 以上にする(低すぎると回らない) |
 | 正転のはずが逆に回る | モーター線の差し込みを逆にする。またはコードの `in1` と `in2` を入れ替える |
