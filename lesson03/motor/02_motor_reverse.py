@@ -1,44 +1,21 @@
-# 正転 → 停止 → 逆転 → 停止と動かす。必ず車輪を浮かせて実行する。
-import lgpio
+# 正転→停止→逆転。必ず車輪を浮かせて実行する。
 import time
-import signal
+from motor_gpio import setup_gpio, set_speed, stop_motor, close_gpio
 
-in1 = 17          # A側(右)のIN1。B側(左)を使うときは22
-in2 = 18          # A側(右)のIN2。B側(左)を使うときは19
-seconds = 2       # 回す秒数。10秒より長くしない
-stop_seconds = 1  # 向きを変える前に止める秒数
-
-# SSHが切れてもfinallyを通ってモーターを止める
-signal.signal(signal.SIGHUP, signal.default_int_handler)
-signal.signal(signal.SIGTERM, signal.default_int_handler)
-
-h = lgpio.gpiochip_open(0)  # GPIOを使う準備
-
+in1 = 17  # A側（右）。B側（左）を使うときは22
+in2 = 18  # A側（右）。B側（左）を使うときは19
+seconds = 2  # 片方向の秒数。往復の合計を10秒以内にする
+stop_seconds = 1  # 逆転前は必ず一度止める
+pins = [in1, in2]
+h = setup_gpio(pins)
 try:
-    lgpio.gpio_claim_output(h, in1, 0)  # 最初は両方Low = 停止
-    lgpio.gpio_claim_output(h, in2, 0)
-
-    print("正転", seconds, "秒")
-    lgpio.gpio_write(h, in1, 1)  # IN1がHigh、IN2がLowで正転
-    lgpio.gpio_write(h, in2, 0)
+    set_speed(h, in1, in2, 100)  # 正転
     time.sleep(seconds)
-
-    # いきなり逆向きにすると、モーターと電池に大きな電流が流れる。
-    # 必ず両方Lowにして、いったん止めてから向きを変える。
-    print("停止", stop_seconds, "秒")
-    lgpio.gpio_write(h, in1, 0)
-    lgpio.gpio_write(h, in2, 0)
+    stop_motor(h, pins)
     time.sleep(stop_seconds)
-
-    print("逆転", seconds, "秒")
-    lgpio.gpio_write(h, in1, 0)  # IN1がLow、IN2がHighで逆転
-    lgpio.gpio_write(h, in2, 1)
+    set_speed(h, in2, in1, 100)  # 2本の順番を入れ替えると逆転
     time.sleep(seconds)
-
-    print("停止")
 except KeyboardInterrupt:
     print("中断しました")
 finally:
-    lgpio.gpio_write(h, in1, 0)  # 途中で止めても必ず両方Lowに戻す
-    lgpio.gpio_write(h, in2, 0)
-    lgpio.gpiochip_close(h)      # ピンを解放
+    close_gpio(h, pins)  # PWM停止・全ピンLow・GPIO解放
