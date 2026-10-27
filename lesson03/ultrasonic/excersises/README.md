@@ -1,4 +1,4 @@
-# 第 3 回 演習① 超音波センサ
+# 第 3 回 演習 超音波センサ
 
 `near_led.py` を解いてください。問題文と作業の指示は、そのファイルのコメントにあります。
 コメントの下に自分でコードを書いてから実行します。
@@ -10,7 +10,7 @@
 ```
 cd ~/seminar2
 git add students/$USER/
-git commit -m "第3回 演習① 超音波"
+git commit -m "第3回 演習 超音波"
 git pull
 git push
 ```
