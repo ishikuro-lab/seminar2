@@ -8,8 +8,9 @@ students/
   sato/
     lesson02/    第 2 回の練習問題(lesson02/excersises/ からコピーして解く)
     lesson03/
-      ultrasonic/  第 3 回 前半(lesson03/ultrasonic/ からコピーして解く)
-      motor/       第 3 回 後半(lesson03/motor/ からコピーして解く)
+      ultrasonic/  第 3 回(lesson03/ultrasonic/ からコピーして解く)
+    lesson04/
+      motor/       第 4 回(lesson04/motor/ からコピーして解く)
   ito/
     lesson02/
 ```
@@ -34,13 +35,14 @@ cp -n lesson03/ultrasonic/*.py lesson03/ultrasonic/excersises/*.py students/$USE
 cd students/$USER/lesson03/ultrasonic
 ```
 
-後半(モーター)は、始まるときに同じようにコピーします:
+第 4 回(モーター)の準備:
 
 ```
 cd ~/seminar2
-mkdir -p students/$USER/lesson03/motor
-cp -n lesson03/motor/*.py lesson03/motor/excersises/*.py students/$USER/lesson03/motor/
-cd students/$USER/lesson03/motor
+git pull
+mkdir -p students/$USER/lesson04/motor
+cp -n lesson04/motor/*.py lesson04/motor/excersises/*.py students/$USER/lesson04/motor/
+cd students/$USER/lesson04/motor
 ```
 
 記録して送るとき:
