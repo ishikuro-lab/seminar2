@@ -35,6 +35,7 @@ description: Raspberry Pi Zero 2 W + DRV8833 でモーターや GPIO を安全�
 
 - `import lgpio`、`h = lgpio.gpiochip_open(0)`、`lgpio.gpio_claim_output(h, pin, 0)`。
 - PWM: `lgpio.tx_pwm(h, pin, 1000, duty_percent)`。モーターでは 0% と 100% を `gpio_write` のデジタル出力に切り替える(100% の PWM は High に張り付かないことがある)。`lesson02/` の LED 教材は簡単さを優先して `tx_pwm` だけを使う。
+- `tx_pwm(h, pin, 1000, 0)` は PWM を止めない(0% の PWM が動き続け、そのピンを Low に書き戻す)。止めるときは周波数 0 の `tx_pwm(h, pin, 0, 0)`。PWM を使ったピンを `gpio_write` で High にするときは、先に周波数 0 で止める。2026-10-27 に関数版 `motor_gpio.py` の 100% で回らなかった原因。
 - 入力(センサ・スイッチ): `lgpio.gpio_claim_input(h, pin, lgpio.SET_PULL_UP)`、`lgpio.gpio_read(h, pin)`。
 - 後片付け: `gpio_free` → `gpiochip_close`。
 - `lgpio` は Raspberry Pi OS に入っている。無ければ `sudo apt install python3-lgpio`(先生に依頼)。
