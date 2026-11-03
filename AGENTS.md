@@ -18,7 +18,7 @@ Claude Code 向けの [CLAUDE.md](CLAUDE.md) と同じ内容です。どのツ�
 - モーターを回すコードは、必ず車輪を浮かせて試す手順を書く。
 - LED・超音波教材では `lgpio` と標準ライブラリの関数を直接使い、準備・測定・終了処理も教材内に書く。新しいコードはGPIOを模擬した環境で確認してから実機で試す。
 - 走行時間に上限を付ける。無限ループでモーターを回しっぱなしにしない。
-- 終了時・例外時・`Ctrl + C` で全ピンを Low にする(`finally`)。モーターを回すコードでは SSH 切断でも止まるように `SIGHUP/SIGTERM` も処理する。LED・センサ教材(`lesson02/` の LED と `lesson03/ultrasonic/` の超音波)には `signal` を入れない。
+- 終了時・例外時・`Ctrl + C` で全ピンを Low にする(`finally`)。モーターを回すコードでは SSH 切断でも止まるように `SIGHUP/SIGTERM` も処理する。LED・センサ教材(`lesson02/` の LED、`lesson03/ultrasonic/` の超音波、`lesson05/linesensor/` のラインセンサ)には `signal` を入れない。
 - 配線: A 側 GPIO17/18(J4)、B 側 GPIO22/19(J5)。有効化ピンは基板上で 3.3V 固定。
 - `sudo` が必要な操作は受講生にはできない。コマンドを示して管理者に依頼してもらう。
 
